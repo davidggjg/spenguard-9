@@ -3,6 +3,9 @@ package com.davidggjg.spenguard.service;
 import android.accessibilityservice.AccessibilityService;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityWindowInfo;
@@ -16,7 +19,8 @@ public class SPenAccessibilityService extends AccessibilityService {
     private static final long COOLDOWN_MS = 3000;
 
     private long lastTriggerTime = 0;
-    private boolean airCommandOpen = false;
+    private boolean airCommandWasOpen = false;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -26,41 +30,69 @@ public class SPenAccessibilityService extends AccessibilityService {
                 ? event.getPackageName().toString() : "";
         int type = event.getEventType();
 
-        // Air Command נפתח = העט נשלף
+        // ── Air Command נפתח = עט נשלף ───────────────────────────────────
         if (AIR_COMMAND_PKG.equals(pkg)
                 && type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+
             long now = System.currentTimeMillis();
             if (now - lastTriggerTime < COOLDOWN_MS) return;
             lastTriggerTime = now;
-            airCommandOpen = true;
-            Log.i(TAG, "Air Command opened = S Pen removed!");
+            airCommandWasOpen = true;
+
+            Log.i(TAG, "Air Command opened → S Pen removed!");
+
+            // מעיר מסך אם כבוי
+            wakeScreen();
+
+            // מפעיל את ה-Guard מיד
             triggerGuard();
         }
 
-        // בדיקה אם Air Command נסגר = העט חזר
-        if (type == AccessibilityEvent.TYPE_WINDOWS_CHANGED && airCommandOpen) {
-            boolean stillOpen = false;
-            try {
-                List<AccessibilityWindowInfo> windows = getWindows();
-                if (windows != null) {
-                    for (AccessibilityWindowInfo w : windows) {
-                        CharSequence title = w.getTitle();
-                        if (title != null && title.toString().toLowerCase()
-                                .contains("air")) {
-                            stillOpen = true;
-                            break;
-                        }
-                    }
+        // ── בדיקה אם Air Command נסגר = עט חזר ──────────────────────────
+        if (airCommandWasOpen && type == AccessibilityEvent.TYPE_WINDOWS_CHANGED) {
+            handler.postDelayed(() -> {
+                if (!isAirCommandOpen()) {
+                    airCommandWasOpen = false;
+                    Log.i(TAG, "Air Command closed → pen returned → stopping guard");
+                    stopGuard();
                 }
-            } catch (Exception e) {
-                Log.e(TAG, "getWindows: " + e.getMessage());
-            }
+            }, 500);
+        }
+    }
 
-            if (!stillOpen) {
-                airCommandOpen = false;
-                Log.i(TAG, "Air Command closed = pen back = stopping guard");
-                stopService(new Intent(this, SPenGuardService.class));
+    private boolean isAirCommandOpen() {
+        try {
+            List<AccessibilityWindowInfo> windows = getWindows();
+            if (windows == null) return false;
+            for (AccessibilityWindowInfo w : windows) {
+                CharSequence pkg = null;
+                // בדיקה דרך root node
+                if (w.getRoot() != null) {
+                    pkg = w.getRoot().getPackageName();
+                }
+                if (pkg != null && AIR_COMMAND_PKG.equals(pkg.toString())) {
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            Log.e(TAG, "isAirCommandOpen: " + e.getMessage());
+        }
+        return false;
+    }
+
+    private void wakeScreen() {
+        try {
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            if (pm != null && !pm.isInteractive()) {
+                PowerManager.WakeLock wl = pm.newWakeLock(
+                        PowerManager.FULL_WAKE_LOCK |
+                        PowerManager.ACQUIRE_CAUSES_WAKEUP |
+                        PowerManager.ON_AFTER_RELEASE,
+                        "SPenGuard:ScreenWake");
+                wl.acquire(3000);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "wakeScreen: " + e.getMessage());
         }
     }
 
@@ -74,14 +106,22 @@ public class SPenAccessibilityService extends AccessibilityService {
         }
     }
 
-    @Override
-    public void onInterrupt() {
-        Log.d(TAG, "AccessibilityService interrupted");
+    private void stopGuard() {
+        Intent svc = new Intent(this, SPenGuardService.class);
+        svc.setAction(SPenGuardService.ACTION_STOP);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(svc);
+        } else {
+            startService(svc);
+        }
     }
+
+    @Override
+    public void onInterrupt() {}
 
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-        Log.i(TAG, "SPenAccessibilityService connected");
+        Log.i(TAG, "SPenAccessibilityService connected and ready");
     }
 }
