@@ -12,22 +12,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
 
     <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
-     <!-- AccessibilityService לזיהוי שליפת S Pen על S25 Ultra -->
-        <service
-            android:name=".service.SPenAccessibilityService"
-            android:exported="true"
-            android:label="SPenGuard"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_service_config" />
-        </service>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -52,13 +41,10 @@
             android:exported="true"
             android:enabled="true">
             <intent-filter android:priority="1000">
-                <!-- Note9 → S24 Ultra (BLE) -->
                 <action android:name="com.samsung.android.app.cocktail.COCKTAIL_VIEW" />
                 <action android:name="com.samsung.android.app.spen.remote.SPEN_DETACHED" />
                 <action android:name="com.samsung.android.cocktail.v2.action.SPEN_DETACHED" />
-                <!-- S25 Ultra / S26 Ultra (EMF, no BLE) -->
                 <action android:name="com.samsung.android.app.spen.SPEN_OUT_STATE_CHANGED" />
-                <!-- Boot -->
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
@@ -75,5 +61,19 @@
             android:foregroundServiceType="mediaPlayback"
             android:stopWithTask="false" />
 
+        <service
+            android:name=".service.SPenAccessibilityService"
+            android:exported="true"
+            android:label="SPenGuard"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
     </application>
+
 </manifest>
