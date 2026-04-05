@@ -16,7 +16,6 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.Image;
 import android.media.ImageReader;
@@ -30,7 +29,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.InputDevice;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,6 +56,8 @@ public class SPenGuardService extends Service {
     private static final int ALARM_MS = 5000;
     private static final int REPEAT_INTERVAL_MS = 30_000;
 
+    private boolean isRunning = false;
+
     // Camera
     private CameraManager cameraManager;
     private CameraDevice cameraDevice;
@@ -83,6 +83,7 @@ public class SPenGuardService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && ACTION_SPEN_REMOVED.equals(intent.getAction())) {
+            isRunning = true;
             startForeground(NOTIF_ID, buildNotification());
             playAlarm();
             capturePhoto();
@@ -96,6 +97,7 @@ public class SPenGuardService extends Service {
 
     @Override
     public void onDestroy() {
+        isRunning = false;
         stopAlarm();
         closeCamera();
         super.onDestroy();
@@ -112,54 +114,24 @@ public class SPenGuardService extends Service {
             }
             toneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
             toneGenerator.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, ALARM_MS);
-            Log.i(TAG, "Alarm playing for " + ALARM_MS + "ms");
+            Log.i(TAG, "Alarm playing");
         } catch (Exception e) {
             Log.e(TAG, "Alarm error: " + e.getMessage());
         }
 
-        // אחרי 5 שניות — בדוק אם העט חזר
-        mainHandler.postDelayed(this::checkAndRepeat, ALARM_MS + 500);
+        // אחרי 5 שניות — תזמן צפצוף נוסף אחרי 30 שניות אם השירות עדיין פעיל
+        mainHandler.postDelayed(this::scheduleRepeat, ALARM_MS + 500);
     }
 
-    private void checkAndRepeat() {
-        if (isPenStillOut()) {
-            // העט עדיין בחוץ — צפצף שוב אחרי 30 שניות
-            Log.i(TAG, "Pen still out — will beep again in 30s");
-            mainHandler.postDelayed(() -> {
-                if (isPenStillOut()) {
-                    stopAlarm();
-                    playAlarm();
-                } else {
-                    Log.i(TAG, "Pen returned — stopping");
-                    stopAlarm();
-                    stopSelf();
-                }
-            }, REPEAT_INTERVAL_MS);
-        } else {
-            Log.i(TAG, "Pen returned — stopping");
-            stopAlarm();
-            stopSelf();
-        }
-    }
-
-    private boolean isPenStillOut() {
-        try {
-            InputManager im = (InputManager) getSystemService(Context.INPUT_SERVICE);
-            if (im == null) return true;
-            int[] ids = im.getInputDeviceIds();
-            for (int id : ids) {
-                InputDevice d = im.getInputDevice(id);
-                if (d == null) continue;
-                String name = d.getName().toLowerCase();
-                if ((name.contains("pen") || name.contains("wacom") || name.contains("e-pen"))
-                        && (d.getSources() & InputDevice.SOURCE_STYLUS) != 0) {
-                    return true;
-                }
+    private void scheduleRepeat() {
+        if (!isRunning) return;
+        Log.i(TAG, "Scheduling repeat beep in 30s");
+        mainHandler.postDelayed(() -> {
+            if (isRunning) {
+                stopAlarm();
+                playAlarm();
             }
-        } catch (Exception e) {
-            Log.e(TAG, "isPenStillOut: " + e.getMessage());
-        }
-        return false;
+        }, REPEAT_INTERVAL_MS);
     }
 
     private void stopAlarm() {
