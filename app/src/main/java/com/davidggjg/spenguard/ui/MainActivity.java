@@ -6,12 +6,12 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -25,10 +25,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQ = 100;
 
-    private Switch   guardSwitch;
+    private SwitchCompat guardSwitch;
     private TextView statusIcon;
     private TextView statusText;
-    private Button   startBtn;
+    private Button startBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(i);
         else startService(i);
         setStatus(true);
-        Toast.makeText(this, "🛡️ SPenGuard מופעל", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "SPenGuard מופעל", Toast.LENGTH_SHORT).show();
     }
 
     private void stopGuard() {
@@ -78,12 +78,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void setStatus(boolean on) {
         if (on) {
-            statusIcon.setText("🛡️");
-            statusText.setText("הגנה פעילה!\nשליפת S Pen → צילום + אזעקה 5 שניות");
-            startBtn.setText("הגנה פעילה ✓");
+            statusIcon.setText("ON");
+            statusText.setText("הגנה פעילה!\nשליפת S Pen = צילום + אזעקה 5 שניות");
+            startBtn.setText("הגנה פעילה");
             startBtn.setEnabled(false);
         } else {
-            statusIcon.setText("⚠️");
+            statusIcon.setText("!");
             statusText.setText("לחץ כדי להפעיל את ההגנה");
             startBtn.setText("הפעל הגנה");
             startBtn.setEnabled(true);
