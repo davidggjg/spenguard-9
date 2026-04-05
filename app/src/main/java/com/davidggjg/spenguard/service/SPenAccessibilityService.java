@@ -5,22 +5,18 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityWindowInfo;
 
-/**
- * AccessibilityService שמזהה כשתפריט Air Command נפתח.
- * על S25 Ultra — Air Command נפתח אוטומטית כשהעט נשלף מה-slot.
- * זו הדרך היחידה לזהות שליפה ב-S25 Ultra ללא BLE.
- *
- * המשתמש צריך להפעיל את השירות ב:
- * הגדרות → נגישות → SPenGuard → הפעל
- */
+import java.util.List;
+
 public class SPenAccessibilityService extends AccessibilityService {
 
     private static final String TAG = "SPenGuard";
     private static final String AIR_COMMAND_PKG = "com.samsung.android.service.aircommand";
+    private static final long COOLDOWN_MS = 3000;
 
     private long lastTriggerTime = 0;
-    private static final long COOLDOWN_MS = 3000; // מניעת double-trigger
+    private boolean airCommandOpen = false;
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -28,22 +24,43 @@ public class SPenAccessibilityService extends AccessibilityService {
 
         String pkg = event.getPackageName() != null
                 ? event.getPackageName().toString() : "";
-
         int type = event.getEventType();
 
-        // זיהוי: חלון Air Command נפתח
+        // Air Command נפתח = העט נשלף
         if (AIR_COMMAND_PKG.equals(pkg)
                 && type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-
             long now = System.currentTimeMillis();
-            if (now - lastTriggerTime < COOLDOWN_MS) {
-                Log.d(TAG, "Air Command opened but in cooldown, skipping");
-                return;
+            if (now - lastTriggerTime < COOLDOWN_MS) return;
+            lastTriggerTime = now;
+            airCommandOpen = true;
+            Log.i(TAG, "Air Command opened = S Pen removed!");
+            triggerGuard();
+        }
+
+        // בדיקה אם Air Command נסגר = העט חזר
+        if (type == AccessibilityEvent.TYPE_WINDOWS_CHANGED && airCommandOpen) {
+            boolean stillOpen = false;
+            try {
+                List<AccessibilityWindowInfo> windows = getWindows();
+                if (windows != null) {
+                    for (AccessibilityWindowInfo w : windows) {
+                        CharSequence title = w.getTitle();
+                        if (title != null && title.toString().toLowerCase()
+                                .contains("air")) {
+                            stillOpen = true;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "getWindows: " + e.getMessage());
             }
 
-            lastTriggerTime = now;
-            Log.i(TAG, "Air Command opened = S Pen removed! Triggering guard...");
-            triggerGuard();
+            if (!stillOpen) {
+                airCommandOpen = false;
+                Log.i(TAG, "Air Command closed = pen back = stopping guard");
+                stopService(new Intent(this, SPenGuardService.class));
+            }
         }
     }
 
