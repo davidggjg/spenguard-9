@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.PowerManager;
 import android.util.Log;
 
 import com.davidggjg.spenguard.service.SPenGuardService;
@@ -16,65 +15,71 @@ public class SPenReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent == null || intent.getAction() == null) return;
+        if (intent == null) return;
         String action = intent.getAction();
-        Log.d(TAG, "Received: " + action);
+        if (action == null) return;
+
+        Log.i(TAG, "SPenReceiver: " + action);
 
         switch (action) {
-
-            case Intent.ACTION_BOOT_COMPLETED:
-            case "android.intent.action.QUICKBOOT_POWERON":
-                Log.i(TAG, "Boot → starting watchdog");
-                startService(context, WatchdogService.class);
-                break;
-
-            // BLE-based — Note9 to S24 Ultra
-            case "com.samsung.android.app.cocktail.COCKTAIL_VIEW":
-            case "com.samsung.android.app.spen.remote.SPEN_DETACHED":
-            case "com.samsung.android.cocktail.v2.action.SPEN_DETACHED":
-                Log.i(TAG, "S Pen removed [BLE]");
-                triggerGuard(context);
-                break;
-
-            // EMF-based — S25 Ultra / S26 Ultra (no Bluetooth)
-            case "com.samsung.android.app.spen.SPEN_OUT_STATE_CHANGED":
-                if (intent.getBooleanExtra("spen_out", false)) {
-                    Log.i(TAG, "S Pen removed [EMF]");
+            case "com.samsung.pen.INSERT":
+                // זה ה-broadcast הרשמי של חיישן Hall — עובד גם עם מסך כבוי!
+                boolean penInserted = intent.getBooleanExtra("penInsert", true);
+                if (!penInserted) {
+                    Log.i(TAG, "S Pen REMOVED (Hall sensor broadcast)");
                     triggerGuard(context);
+                } else {
+                    Log.i(TAG, "S Pen INSERTED (Hall sensor broadcast)");
+                    stopGuard(context);
                 }
                 break;
 
-            default:
+            case "com.samsung.android.app.spen.SPEN_OUT_STATE_CHANGED":
+                int state = intent.getIntExtra("state", -1);
+                Log.i(TAG, "SPEN_OUT_STATE_CHANGED state=" + state);
+                if (state == 1) {
+                    triggerGuard(context);
+                } else if (state == 0) {
+                    stopGuard(context);
+                }
+                break;
+
+            case "com.samsung.android.app.spen.remote.SPEN_DETACHED":
+            case "com.samsung.android.cocktail.v2.action.SPEN_DETACHED":
+                Log.i(TAG, "S Pen detached broadcast");
+                triggerGuard(context);
+                break;
+
+            case Intent.ACTION_BOOT_COMPLETED:
+            case "android.intent.action.QUICKBOOT_POWERON":
+                Log.i(TAG, "Boot completed — starting WatchdogService");
+                startWatchdog(context);
                 break;
         }
     }
 
     private void triggerGuard(Context context) {
-        // Wake screen if off
-        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        if (pm != null && !pm.isInteractive()) {
-            PowerManager.WakeLock wl = pm.newWakeLock(
-                    PowerManager.FULL_WAKE_LOCK |
-                    PowerManager.ACQUIRE_CAUSES_WAKEUP |
-                    PowerManager.ON_AFTER_RELEASE,
-                    "SPenGuard:WakeLock");
-            wl.acquire(10_000L);
-        }
-
         Intent svc = new Intent(context, SPenGuardService.class);
         svc.setAction(SPenGuardService.ACTION_SPEN_REMOVED);
-        startService(context, svc);
-    }
-
-    private void startService(Context context, Class<?> cls) {
-        startService(context, new Intent(context, cls));
-    }
-
-    private void startService(Context context, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent);
+            context.startForegroundService(svc);
         } else {
-            context.startService(intent);
+            context.startService(svc);
+        }
+    }
+
+    private void stopGuard(Context context) {
+        Intent svc = new Intent(context, SPenGuardService.class);
+        svc.setAction(SPenGuardService.ACTION_STOP);
+        context.startService(svc);
+    }
+
+    private void startWatchdog(Context context) {
+        Intent w = new Intent(context, WatchdogService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(w);
+        } else {
+            context.startService(w);
         }
     }
 }
