@@ -17,11 +17,11 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.AudioAttributes;
+import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.media.Image;
 import android.media.ImageReader;
-import android.media.MediaPlayer;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -58,10 +58,15 @@ public class SPenGuardService extends Service {
     private static final String CHANNEL_ID = "spenguard_alert";
     private static final int NOTIF_ID = 1001;
     private static final int REPEAT_INTERVAL_MS = 30_000;
-    private static final int MAX_DURATION_MS = 5 * 60 * 1000; // 5 דקות מקסימום
+    private static final int MAX_DURATION_MS = 5 * 60 * 1000;
+
+    // צפצוף — 1000Hz גל סינוס
+    private static final int SAMPLE_RATE = 44100;
+    private static final double FREQUENCY = 1000.0;
 
     private boolean isRunning = false;
-    private MediaPlayer mediaPlayer;
+    private AudioTrack audioTrack;
+    private Thread alarmThread;
     private Handler mainHandler;
     private PowerManager.WakeLock wakeLock;
 
@@ -72,8 +77,6 @@ public class SPenGuardService extends Service {
     private ImageReader imageReader;
     private HandlerThread cameraThread;
     private Handler cameraHandler;
-
-    // ── Lifecycle ─────────────────────────────────────────────────────────
 
     @Override
     public void onCreate() {
@@ -88,22 +91,16 @@ public class SPenGuardService extends Service {
         if (intent == null) return START_NOT_STICKY;
 
         if (ACTION_STOP.equals(intent.getAction())) {
-            Log.i(TAG, "Stop requested");
             stopEverything();
             return START_NOT_STICKY;
         }
 
         if (ACTION_SPEN_REMOVED.equals(intent.getAction()) && !isRunning) {
             isRunning = true;
-
-            // Wake lock — מונע שהמכשיר ייכנס לשינה תוך כדי
             acquireWakeLock();
-
             startForeground(NOTIF_ID, buildNotification());
-            playAlarm();
+            startAlarm();
             capturePhoto();
-
-            // עצירה מקסימלית אחרי 5 דקות בכל מקרה
             mainHandler.postDelayed(this::stopEverything, MAX_DURATION_MS);
         }
         return START_NOT_STICKY;
@@ -136,8 +133,7 @@ public class SPenGuardService extends Service {
         if (pm != null) {
             wakeLock = pm.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK,
-                "SPenGuard:AlarmLock"
-            );
+                "SPenGuard:AlarmLock");
             wakeLock.acquire(MAX_DURATION_MS);
         }
     }
@@ -149,69 +145,89 @@ public class SPenGuardService extends Service {
         }
     }
 
-    // ── Alarm ─────────────────────────────────────────────────────────────
+    // ── Alarm — גל סינוס 1000Hz חזק וארוך ───────────────────────────────
 
-    private void playAlarm() {
-        if (!isRunning) return;
-
-        stopAlarm(); // עצור קודם אם משהו פועל
-
-        try {
-            // הגבר אזעקה למקסימום
-            AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            if (am != null) {
-                am.setStreamVolume(AudioManager.STREAM_ALARM,
-                        am.getStreamMaxVolume(AudioManager.STREAM_ALARM), 0);
-            }
-
-            // השמע צליל אזעקה ברירת מחדל של הטלפון — חזק הרבה יותר מ-ToneGenerator
-            Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-            if (alarmUri == null) {
-                alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-            }
-
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(this, alarmUri);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .build());
-            } else {
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-            }
-
-            mediaPlayer.setLooping(false);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-            Log.i(TAG, "Alarm playing (MediaPlayer)");
-
-            // אחרי 5 שניות — תזמן חזרה אחרי 30 שניות
-            mainHandler.postDelayed(this::scheduleRepeat, 5000);
-
-        } catch (Exception e) {
-            Log.e(TAG, "MediaPlayer error: " + e.getMessage());
-            // fallback
-            scheduleRepeat();
+    private void startAlarm() {
+        // הגבר אזעקה למקסימום
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if (am != null) {
+            am.setStreamVolume(AudioManager.STREAM_ALARM,
+                    am.getStreamMaxVolume(AudioManager.STREAM_ALARM), 0);
         }
-    }
 
-    private void scheduleRepeat() {
-        if (!isRunning) return;
-        Log.i(TAG, "Will repeat in 30s");
+        alarmThread = new Thread(() -> {
+            // בנה גל סינוס
+            int bufferSize = AudioTrack.getMinBufferSize(
+                    SAMPLE_RATE,
+                    AudioFormat.CHANNEL_OUT_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT) * 4;
+
+            short[] buffer = new short[bufferSize];
+            for (int i = 0; i < bufferSize; i++) {
+                buffer[i] = (short) (Short.MAX_VALUE *
+                        Math.sin(2.0 * Math.PI * FREQUENCY * i / SAMPLE_RATE));
+            }
+
+            AudioAttributes attrs = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+
+            AudioFormat format = new AudioFormat.Builder()
+                    .setSampleRate(SAMPLE_RATE)
+                    .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                    .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                    .build();
+
+            audioTrack = new AudioTrack.Builder()
+                    .setAudioAttributes(attrs)
+                    .setAudioFormat(format)
+                    .setBufferSizeInBytes(bufferSize * 2)
+                    .setTransferMode(AudioTrack.MODE_STREAM)
+                    .build();
+
+            audioTrack.play();
+            Log.i(TAG, "Alarm started");
+
+            // נגן ברצף עד שנעצרים
+            while (isRunning && !Thread.currentThread().isInterrupted()) {
+                audioTrack.write(buffer, 0, buffer.length);
+            }
+
+            audioTrack.stop();
+            audioTrack.release();
+            audioTrack = null;
+            Log.i(TAG, "Alarm stopped");
+
+            // תזמן חזרה אחרי 30 שניות
+            if (isRunning) {
+                mainHandler.postDelayed(() -> {
+                    if (isRunning) startAlarm();
+                }, REPEAT_INTERVAL_MS);
+            }
+
+        }, "SPenGuard-Alarm");
+
+        alarmThread.setDaemon(true);
+        alarmThread.start();
+
+        // עצור את הצפצוף אחרי 5 שניות ← תזמון חזרה
         mainHandler.postDelayed(() -> {
-            if (isRunning) playAlarm();
-        }, REPEAT_INTERVAL_MS);
+            stopAlarm();
+        }, 5000);
     }
 
     private void stopAlarm() {
-        if (mediaPlayer != null) {
+        if (alarmThread != null) {
+            alarmThread.interrupt();
+            alarmThread = null;
+        }
+        if (audioTrack != null) {
             try {
-                if (mediaPlayer.isPlaying()) mediaPlayer.stop();
-                mediaPlayer.release();
+                audioTrack.stop();
+                audioTrack.release();
             } catch (Exception ignored) {}
-            mediaPlayer = null;
+            audioTrack = null;
         }
     }
 
@@ -244,7 +260,7 @@ public class SPenGuardService extends Service {
                 }, cameraHandler);
 
             } catch (CameraAccessException | SecurityException e) {
-                Log.e(TAG, "Camera open: " + e.getMessage());
+                Log.e(TAG, "Camera: " + e.getMessage());
             }
         });
     }
@@ -258,7 +274,7 @@ public class SPenGuardService extends Service {
                             captureSession = s; shoot();
                         }
                         @Override public void onConfigureFailed(@NonNull CameraCaptureSession s) {
-                            Log.e(TAG, "Session config failed");
+                            Log.e(TAG, "Session failed");
                         }
                     }, cameraHandler);
         } catch (CameraAccessException e) {
@@ -296,9 +312,11 @@ public class SPenGuardService extends Service {
             ContentValues cv = new ContentValues();
             cv.put(MediaStore.Images.Media.DISPLAY_NAME, name);
             cv.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-            cv.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/SPenGuard");
+            cv.put(MediaStore.Images.Media.RELATIVE_PATH,
+                    Environment.DIRECTORY_PICTURES + "/SPenGuard");
             cv.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+            Uri uri = getContentResolver()
+                    .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
             if (uri != null) {
                 try (OutputStream os = getContentResolver().openOutputStream(uri)) {
                     if (os != null) os.write(data);
@@ -355,7 +373,7 @@ public class SPenGuardService extends Service {
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("SPenGuard — S Pen הוסר!")
-                .setContentText("מצלם ומצפצף. לחץ כדי לעצור.")
+                .setContentText("לחץ עצור כדי לכבות את האזעקה")
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(openIntent)
