@@ -2,17 +2,17 @@ package com.davidggjg.spenguard.ui;
 
 import android.Manifest;
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.davidggjg.spenguard.R;
+import com.davidggjg.spenguard.receiver.SPenDeviceAdminReceiver;
 import com.davidggjg.spenguard.service.WatchdogService;
 
 import java.util.ArrayList;
@@ -28,17 +29,14 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERM = 100;
-
-    // שלבים
-    private static final int STEP_PERMISSION = 1;
-    private static final int STEP_OPEN_ACCESSIBILITY = 2;
-    private static final int STEP_ALLOW_RESTRICTED = 3;
-    private static final int STEP_ENABLE_SERVICE = 4;
-    private static final int STEP_DONE = 5;
+    private static final int REQ_DEVICE_ADMIN = 200;
 
     private TextView statusIcon;
     private TextView statusText;
     private Button actionBtn;
+
+    private DevicePolicyManager dpm;
+    private ComponentName adminComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         statusIcon = findViewById(R.id.statusIcon);
         statusText = findViewById(R.id.statusText);
         actionBtn  = findViewById(R.id.startButton);
+
+        dpm = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+        adminComponent = new ComponentName(this, SPenDeviceAdminReceiver.class);
 
         actionBtn.setOnClickListener(v -> handleStep());
     }
@@ -59,68 +60,77 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int getCurrentStep() {
-        if (!hasCameraPermission()) return STEP_PERMISSION;
-        if (!isAccessibilityEnabled()) {
-            // בדוק אם המשתמש כבר ניסה לפתוח נגישות
-            // אם הנגישות לא פעילה — אנחנו בשלב 2 או 3 או 4
-            // נניח שלב 2 תמיד — המשתמש יתקדם
-            return STEP_OPEN_ACCESSIBILITY;
-        }
-        return STEP_DONE;
+        if (!hasCameraPermission())   return 1; // הרשאת מצלמה
+        if (!isDeviceAdminActive())   return 2; // מנהל מכשיר
+        if (!isAccessibilityEnabled()) return 3; // נגישות
+        return 4; // הכל מוכן
     }
 
     private void handleStep() {
-        int step = getCurrentStep();
-        switch (step) {
-            case STEP_PERMISSION:
+        switch (getCurrentStep()) {
+            case 1:
                 requestPerms();
                 break;
-
-            case STEP_OPEN_ACCESSIBILITY:
-                // פתח נגישות ישירות
+            case 2:
+                requestDeviceAdmin();
+                break;
+            case 3:
                 Intent acc = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 acc.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(acc);
                 break;
-
-            case STEP_DONE:
+            case 4:
                 startGuard();
+                updateUI();
                 break;
         }
     }
 
     private void updateUI() {
-        int step = getCurrentStep();
-
-        switch (step) {
-            case STEP_PERMISSION:
+        switch (getCurrentStep()) {
+            case 1:
                 statusIcon.setText("1");
-                statusText.setText("שלב 1 מתוך 3\n\nנדרשת הרשאת מצלמה\nלחץ כדי לאשר");
+                statusText.setText(
+                    "שלב 1 מתוך 3\n\n" +
+                    "נדרשת הרשאת מצלמה\n" +
+                    "לחץ כדי לאשר"
+                );
                 actionBtn.setText("תן הרשאת מצלמה");
                 actionBtn.setEnabled(true);
                 break;
 
-            case STEP_OPEN_ACCESSIBILITY:
-                // בדוק אם הכפתור הקודם כבר לחץ
-                // הצג את כל שלושת השלבים הנגישות
+            case 2:
                 statusIcon.setText("2");
                 statusText.setText(
-                    "שלב 2 מתוך 3 — הגדרת נגישות\n\n" +
+                    "שלב 2 מתוך 3\n\n" +
+                    "נדרשת הרשאת מנהל מכשיר\n\n" +
+                    "זה מאפשר לאפליקציה לפעול\n" +
+                    "גם כשהמסך כבוי\n\n" +
+                    "לחץ כדי לאשר"
+                );
+                actionBtn.setText("אשר מנהל מכשיר");
+                actionBtn.setEnabled(true);
+                break;
+
+            case 3:
+                statusIcon.setText("3");
+                statusText.setText(
+                    "שלב 3 מתוך 3 — הגדרת נגישות\n\n" +
                     "① לחץ על הכפתור למטה\n" +
                     "② מצא SPenGuard ברשימה\n" +
                     "③ אם כתוב חסום — לחץ עליו בכל זאת\n" +
-                    "④ תקבל הודעה על גישה חסומה — לחץ אישור\n\n" +
-                    "⑤ עכשיו לחץ כפתור למטה שוב\n" +
-                    "⑥ לך לאפליקציות ← SPenGuard\n" +
-                    "⑦ 3 נקודות למעלה שמאל\n" +
-                    "⑧ אפשר הגדרות מוגבלות\n\n" +
-                    "⑨ חזור לנגישות ← SPenGuard ← הפעל"
+                    "④ יקפוץ חלון — לחץ אישור\n\n" +
+                    "⑤ לך להגדרות ← אפליקציות ← SPenGuard\n" +
+                    "⑥ לחץ 3 נקודות למעלה שמאל\n" +
+                    "⑦ אפשר הגדרות מוגבלות\n\n" +
+                    "⑧ חזור לנגישות ← SPenGuard ← הפעל\n" +
+                    "⑨ חזור לאפליקציה"
                 );
                 actionBtn.setText("פתח הגדרות נגישות ←");
                 actionBtn.setEnabled(true);
                 break;
 
-            case STEP_DONE:
+            case 4:
                 startGuard();
                 statusIcon.setText("✓");
                 statusText.setText(
@@ -147,6 +157,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean hasCameraPermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private boolean isDeviceAdminActive() {
+        return dpm != null && dpm.isAdminActive(adminComponent);
+    }
+
     private boolean isAccessibilityEnabled() {
         AccessibilityManager am =
             (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
@@ -161,9 +180,12 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private boolean hasCameraPermission() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED;
+    private void requestDeviceAdmin() {
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "SPenGuard צריך הרשאה זו כדי לפעול גם כשהמסך כבוי");
+        startActivityForResult(intent, REQ_DEVICE_ADMIN);
     }
 
     private void requestPerms() {
@@ -177,6 +199,14 @@ public class MainActivity extends AppCompatActivity {
         }
         ActivityCompat.requestPermissions(this,
                 list.toArray(new String[0]), REQ_PERM);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_DEVICE_ADMIN) {
+            updateUI();
+        }
     }
 
     @Override
