@@ -38,6 +38,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.davidggjg.spenguard.ui.MainActivity;
+import com.davidggjg.spenguard.ui.StopAlarmActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -60,7 +61,6 @@ public class SPenGuardService extends Service {
     private static final int REPEAT_INTERVAL_MS = 30_000;
     private static final int MAX_DURATION_MS = 5 * 60 * 1000;
 
-    // צפצוף — 1000Hz גל סינוס
     private static final int SAMPLE_RATE = 44100;
     private static final double FREQUENCY = 1000.0;
 
@@ -70,7 +70,6 @@ public class SPenGuardService extends Service {
     private Handler mainHandler;
     private PowerManager.WakeLock wakeLock;
 
-    // Camera
     private CameraManager cameraManager;
     private CameraDevice cameraDevice;
     private CameraCaptureSession captureSession;
@@ -99,6 +98,16 @@ public class SPenGuardService extends Service {
             isRunning = true;
             acquireWakeLock();
             startForeground(NOTIF_ID, buildNotification());
+
+            // פתח את מסך העצירה מעל כל דבר — גם על מסך נעילה
+            Intent popupIntent = new Intent(this, StopAlarmActivity.class);
+            popupIntent.addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_SINGLE_TOP
+            );
+            startActivity(popupIntent);
+
             startAlarm();
             capturePhoto();
             mainHandler.postDelayed(this::stopEverything, MAX_DURATION_MS);
@@ -116,7 +125,7 @@ public class SPenGuardService extends Service {
         super.onDestroy();
     }
 
-    private void stopEverything() {
+    public void stopEverything() {
         isRunning = false;
         mainHandler.removeCallbacksAndMessages(null);
         stopAlarm();
@@ -126,13 +135,13 @@ public class SPenGuardService extends Service {
         stopSelf();
     }
 
-    // ── WakeLock ──────────────────────────────────────────────────────────
-
     private void acquireWakeLock() {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         if (pm != null) {
             wakeLock = pm.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK,
+                PowerManager.FULL_WAKE_LOCK |
+                PowerManager.ACQUIRE_CAUSES_WAKEUP |
+                PowerManager.ON_AFTER_RELEASE,
                 "SPenGuard:AlarmLock");
             wakeLock.acquire(MAX_DURATION_MS);
         }
@@ -145,10 +154,7 @@ public class SPenGuardService extends Service {
         }
     }
 
-    // ── Alarm — גל סינוס 1000Hz חזק וארוך ───────────────────────────────
-
     private void startAlarm() {
-        // הגבר אזעקה למקסימום
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         if (am != null) {
             am.setStreamVolume(AudioManager.STREAM_ALARM,
@@ -156,7 +162,6 @@ public class SPenGuardService extends Service {
         }
 
         alarmThread = new Thread(() -> {
-            // בנה גל סינוס
             int bufferSize = AudioTrack.getMinBufferSize(
                     SAMPLE_RATE,
                     AudioFormat.CHANNEL_OUT_MONO,
@@ -187,9 +192,7 @@ public class SPenGuardService extends Service {
                     .build();
 
             audioTrack.play();
-            Log.i(TAG, "Alarm started");
 
-            // נגן ברצף עד שנעצרים
             while (isRunning && !Thread.currentThread().isInterrupted()) {
                 audioTrack.write(buffer, 0, buffer.length);
             }
@@ -197,9 +200,7 @@ public class SPenGuardService extends Service {
             audioTrack.stop();
             audioTrack.release();
             audioTrack = null;
-            Log.i(TAG, "Alarm stopped");
 
-            // תזמן חזרה אחרי 30 שניות
             if (isRunning) {
                 mainHandler.postDelayed(() -> {
                     if (isRunning) startAlarm();
@@ -211,10 +212,7 @@ public class SPenGuardService extends Service {
         alarmThread.setDaemon(true);
         alarmThread.start();
 
-        // עצור את הצפצוף אחרי 5 שניות ← תזמון חזרה
-        mainHandler.postDelayed(() -> {
-            stopAlarm();
-        }, 5000);
+        mainHandler.postDelayed(this::stopAlarm, 5000);
     }
 
     private void stopAlarm() {
@@ -231,8 +229,6 @@ public class SPenGuardService extends Service {
         }
     }
 
-    // ── Camera ────────────────────────────────────────────────────────────
-
     private void capturePhoto() {
         cameraThread = new HandlerThread("cam");
         cameraThread.start();
@@ -240,7 +236,7 @@ public class SPenGuardService extends Service {
         cameraHandler.post(() -> {
             try {
                 String id = getFrontCameraId();
-                if (id == null) { Log.w(TAG, "No front camera"); return; }
+                if (id == null) return;
 
                 imageReader = ImageReader.newInstance(640, 480, ImageFormat.JPEG, 1);
                 imageReader.setOnImageAvailableListener(reader -> {
@@ -254,9 +250,7 @@ public class SPenGuardService extends Service {
                         cameraDevice = cam; startSession();
                     }
                     @Override public void onDisconnected(@NonNull CameraDevice cam) { cam.close(); }
-                    @Override public void onError(@NonNull CameraDevice cam, int e) {
-                        Log.e(TAG, "Camera error " + e); cam.close();
-                    }
+                    @Override public void onError(@NonNull CameraDevice cam, int e) { cam.close(); }
                 }, cameraHandler);
 
             } catch (CameraAccessException | SecurityException e) {
@@ -273,9 +267,7 @@ public class SPenGuardService extends Service {
                         @Override public void onConfigured(@NonNull CameraCaptureSession s) {
                             captureSession = s; shoot();
                         }
-                        @Override public void onConfigureFailed(@NonNull CameraCaptureSession s) {
-                            Log.e(TAG, "Session failed");
-                        }
+                        @Override public void onConfigureFailed(@NonNull CameraCaptureSession s) {}
                     }, cameraHandler);
         } catch (CameraAccessException e) {
             Log.e(TAG, "startSession: " + e.getMessage());
@@ -350,8 +342,6 @@ public class SPenGuardService extends Service {
             if (cameraThread != null) { cameraThread.quitSafely(); cameraThread = null; }
         } catch (Exception ignored) {}
     }
-
-    // ── Notification ──────────────────────────────────────────────────────
 
     private void createChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
