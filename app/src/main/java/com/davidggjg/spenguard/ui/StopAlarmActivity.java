@@ -7,6 +7,7 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.davidggjg.spenguard.R;
 import com.davidggjg.spenguard.service.SPenGuardService;
 
 public class StopAlarmActivity extends AppCompatActivity {
