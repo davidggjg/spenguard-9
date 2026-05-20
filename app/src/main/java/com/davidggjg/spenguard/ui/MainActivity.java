@@ -1,26 +1,25 @@
 package com.davidggjg.spenguard.ui;
 
 import android.Manifest;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.davidggjg.spenguard.R;
-import com.davidggjg.spenguard.receiver.SPenDeviceAdminReceiver;
-import com.davidggjg.spenguard.service.SPenGuardService;
 import com.davidggjg.spenguard.service.WatchdogService;
 
 import java.util.ArrayList;
@@ -29,77 +28,83 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERM = 100;
-    private static final int REQ_DEVICE_ADMIN = 200;
-    private static final String PREFS = "spenguard_prefs";
-    private static final String KEY_ENABLED = "guard_enabled";
 
-    private SwitchCompat guardSwitch;
     private TextView statusIcon;
     private TextView statusText;
-    private Button startBtn;
-
-    private DevicePolicyManager dpm;
-    private ComponentName adminComponent;
-    private SharedPreferences prefs;
+    private Button actionBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        guardSwitch = findViewById(R.id.guardSwitch);
-        statusIcon  = findViewById(R.id.statusIcon);
-        statusText  = findViewById(R.id.statusText);
-        startBtn    = findViewById(R.id.startButton);
+        statusIcon = findViewById(R.id.statusIcon);
+        statusText = findViewById(R.id.statusText);
+        actionBtn  = findViewById(R.id.startButton);
 
-        dpm = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
-        adminComponent = new ComponentName(this, SPenDeviceAdminReceiver.class);
-        prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
-
-        startBtn.setOnClickListener(v -> activate());
-
-        guardSwitch.setOnCheckedChangeListener((btn, checked) -> {
-            if (checked) {
-                activate();
-            } else {
-                deactivate();
-            }
-        });
-
-        // שחזר מצב קודם
-        boolean wasEnabled = prefs.getBoolean(KEY_ENABLED, false);
-        if (wasEnabled && hasCameraPermission() && isDeviceAdminActive()) {
-            startGuard();
-            guardSwitch.setChecked(true);
-        } else {
-            setStatus(false);
-            guardSwitch.setChecked(false);
-        }
+        actionBtn.setOnClickListener(v -> handleButtonClick());
     }
 
-    private void activate() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    private void handleButtonClick() {
         if (!hasCameraPermission()) {
             requestPerms();
-            guardSwitch.setChecked(false);
-        } else if (!isDeviceAdminActive()) {
-            requestDeviceAdmin();
-            guardSwitch.setChecked(false);
+        } else if (!isAccessibilityEnabled()) {
+            // פתח ישירות להגדרות נגישות
+            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            Toast.makeText(this,
+                "מצא SPenGuard ← לחץ עליו ← אפשר הגדרות מוגבלות ← הפעל",
+                Toast.LENGTH_LONG).show();
         } else {
+            // הכל תקין — הפעל
             startGuard();
-            guardSwitch.setChecked(true);
         }
     }
 
-    private void deactivate() {
-        stopGuard();
-        guardSwitch.setChecked(false);
+    private void updateUI() {
+        if (!hasCameraPermission()) {
+            statusIcon.setText("!");
+            statusText.setText("נדרשת הרשאת מצלמה");
+            actionBtn.setText("תן הרשאה");
+            actionBtn.setEnabled(true);
+
+        } else if (!isAccessibilityEnabled()) {
+            statusIcon.setText("!");
+            statusText.setText(
+                "נדרשת הרשאת נגישות\n\n" +
+                "1. לחץ על הכפתור למטה\n" +
+                "2. מצא SPenGuard ברשימה\n" +
+                "3. לחץ 3 נקודות ← אפשר הגדרות מוגבלות\n" +
+                "4. חזור ולחץ על SPenGuard ← הפעל"
+            );
+            actionBtn.setText("פתח הגדרות נגישות");
+            actionBtn.setEnabled(true);
+
+        } else {
+            // הכל עובד — הפעל אוטומטית
+            startGuard();
+            statusIcon.setText("ON");
+            statusText.setText(
+                "הגנה פעילה!\n\n" +
+                "מצלם עם המצלמה הקדמית\n" +
+                "מצפצף 5 שניות מעל שקט\n" +
+                "עובד גם עם מסך כבוי\n" +
+                "שומר תמונה לגלריה אוטומטית\n" +
+                "מתחיל אוטומטי אחרי ריסטארט"
+            );
+            actionBtn.setEnabled(false);
+            actionBtn.setText("פעיל");
+        }
     }
 
     private void startGuard() {
-        // שמור מצב
-        prefs.edit().putBoolean(KEY_ENABLED, true).apply();
-
-        // הפעל WatchdogService
         Intent i = new Intent(this, WatchdogService.class);
         i.setAction(WatchdogService.ACTION_START);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -107,58 +112,29 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startService(i);
         }
-
-        setStatus(true);
-        Toast.makeText(this, "SPenGuard מופעל", Toast.LENGTH_SHORT).show();
     }
 
-    private void stopGuard() {
-        // שמור מצב כבוי
-        prefs.edit().putBoolean(KEY_ENABLED, false).apply();
+    private boolean isAccessibilityEnabled() {
+        AccessibilityManager am =
+            (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
+        if (am == null) return false;
 
-        // עצור WatchdogService
-        Intent i = new Intent(this, WatchdogService.class);
-        i.setAction(WatchdogService.ACTION_STOP);
-        startService(i);
+        List<AccessibilityServiceInfo> list =
+            am.getEnabledAccessibilityServiceList(
+                AccessibilityServiceInfo.FEEDBACK_ALL_MASK);
 
-        // עצור גם SPenGuardService אם פועל
-        Intent j = new Intent(this, SPenGuardService.class);
-        j.setAction(SPenGuardService.ACTION_STOP);
-        startService(j);
-
-        setStatus(false);
-        Toast.makeText(this, "SPenGuard כבוי", Toast.LENGTH_SHORT).show();
-    }
-
-    private void setStatus(boolean on) {
-        if (on) {
-            statusIcon.setText("ON");
-            statusText.setText("הגנה פעילה!\nשליפת S Pen = צילום + אזעקה");
-            startBtn.setText("פעיל");
-            startBtn.setEnabled(false);
-        } else {
-            statusIcon.setText("!");
-            statusText.setText("לחץ להפעלה");
-            startBtn.setText("הפעל הגנה");
-            startBtn.setEnabled(true);
+        for (AccessibilityServiceInfo info : list) {
+            ServiceInfo si = info.getResolveInfo().serviceInfo;
+            if (getPackageName().equals(si.packageName)) {
+                return true;
+            }
         }
+        return false;
     }
 
     private boolean hasCameraPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private boolean isDeviceAdminActive() {
-        return dpm != null && dpm.isAdminActive(adminComponent);
-    }
-
-    private void requestDeviceAdmin() {
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "SPenGuard צריך הרשאת Device Admin כדי לעבוד עם מסך כבוי");
-        startActivityForResult(intent, REQ_DEVICE_ADMIN);
     }
 
     private void requestPerms() {
@@ -175,28 +151,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_DEVICE_ADMIN) {
-            if (isDeviceAdminActive()) {
-                startGuard();
-                guardSwitch.setChecked(true);
-            } else {
-                Toast.makeText(this,
-                        "נדרשת הרשאת Device Admin", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    @Override
     public void onRequestPermissionsResult(int code,
             @NonNull String[] perms, @NonNull int[] results) {
         super.onRequestPermissionsResult(code, perms, results);
-        if (code == REQ_PERM && hasCameraPermission()) {
-            activate();
-        } else {
-            Toast.makeText(this,
-                    "נדרשת הרשאת מצלמה", Toast.LENGTH_LONG).show();
-        }
+        updateUI();
     }
 }
