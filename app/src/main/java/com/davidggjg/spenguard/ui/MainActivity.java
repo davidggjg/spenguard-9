@@ -5,6 +5,7 @@ import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERM = 100;
     private static final int REQ_DEVICE_ADMIN = 200;
+    private static final String PREFS = "spenguard_prefs";
+    private static final String KEY_ENABLED = "guard_enabled";
 
     private TextView statusIcon;
     private TextView statusText;
@@ -60,10 +63,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int getCurrentStep() {
-        if (!hasCameraPermission())   return 1; // הרשאת מצלמה
-        if (!isDeviceAdminActive())   return 2; // מנהל מכשיר
-        if (!isAccessibilityEnabled()) return 3; // נגישות
-        return 4; // הכל מוכן
+        if (!hasCameraPermission())    return 1;
+        if (!isDeviceAdminActive())    return 2;
+        if (!isAccessibilityEnabled()) return 3;
+        return 4;
     }
 
     private void handleStep() {
@@ -131,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case 4:
+                // שמור שהגנה פעילה
+                saveEnabled(true);
                 startGuard();
                 statusIcon.setText("✓");
                 statusText.setText(
@@ -145,6 +150,13 @@ public class MainActivity extends AppCompatActivity {
                 actionBtn.setEnabled(false);
                 break;
         }
+    }
+
+    private void saveEnabled(boolean enabled) {
+        getSharedPreferences(PREFS, MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_ENABLED, enabled)
+            .apply();
     }
 
     private void startGuard() {
