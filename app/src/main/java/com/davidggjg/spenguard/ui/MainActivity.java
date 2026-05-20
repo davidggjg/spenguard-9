@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat;
 
 import com.davidggjg.spenguard.R;
 import com.davidggjg.spenguard.receiver.SPenDeviceAdminReceiver;
+import com.davidggjg.spenguard.service.SPenGuardService;
 import com.davidggjg.spenguard.service.WatchdogService;
 
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERM = 100;
     private static final int REQ_DEVICE_ADMIN = 200;
+    private static final String PREFS = "spenguard_prefs";
+    private static final String KEY_ENABLED = "guard_enabled";
 
     private SwitchCompat guardSwitch;
     private TextView statusIcon;
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DevicePolicyManager dpm;
     private ComponentName adminComponent;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +54,26 @@ public class MainActivity extends AppCompatActivity {
 
         dpm = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
         adminComponent = new ComponentName(this, SPenDeviceAdminReceiver.class);
+        prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
 
         startBtn.setOnClickListener(v -> activate());
+
         guardSwitch.setOnCheckedChangeListener((btn, checked) -> {
-            if (checked) activate();
-            else deactivate();
+            if (checked) {
+                activate();
+            } else {
+                deactivate();
+            }
         });
 
-        if (hasCameraPermission() && isDeviceAdminActive()) {
+        // שחזר מצב קודם
+        boolean wasEnabled = prefs.getBoolean(KEY_ENABLED, false);
+        if (wasEnabled && hasCameraPermission() && isDeviceAdminActive()) {
             startGuard();
             guardSwitch.setChecked(true);
         } else {
             setStatus(false);
+            guardSwitch.setChecked(false);
         }
     }
 
@@ -79,18 +92,40 @@ public class MainActivity extends AppCompatActivity {
 
     private void deactivate() {
         stopGuard();
+        guardSwitch.setChecked(false);
     }
 
     private void startGuard() {
+        // שמור מצב
+        prefs.edit().putBoolean(KEY_ENABLED, true).apply();
+
+        // הפעל WatchdogService
         Intent i = new Intent(this, WatchdogService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(i);
-        else startService(i);
+        i.setAction(WatchdogService.ACTION_START);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(i);
+        } else {
+            startService(i);
+        }
+
         setStatus(true);
         Toast.makeText(this, "SPenGuard מופעל", Toast.LENGTH_SHORT).show();
     }
 
     private void stopGuard() {
-        stopService(new Intent(this, WatchdogService.class));
+        // שמור מצב כבוי
+        prefs.edit().putBoolean(KEY_ENABLED, false).apply();
+
+        // עצור WatchdogService
+        Intent i = new Intent(this, WatchdogService.class);
+        i.setAction(WatchdogService.ACTION_STOP);
+        startService(i);
+
+        // עצור גם SPenGuardService אם פועל
+        Intent j = new Intent(this, SPenGuardService.class);
+        j.setAction(SPenGuardService.ACTION_STOP);
+        startService(j);
+
         setStatus(false);
         Toast.makeText(this, "SPenGuard כבוי", Toast.LENGTH_SHORT).show();
     }
@@ -135,7 +170,8 @@ public class MainActivity extends AppCompatActivity {
         } else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             list.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-        ActivityCompat.requestPermissions(this, list.toArray(new String[0]), REQ_PERM);
+        ActivityCompat.requestPermissions(this,
+                list.toArray(new String[0]), REQ_PERM);
     }
 
     @Override
@@ -146,19 +182,21 @@ public class MainActivity extends AppCompatActivity {
                 startGuard();
                 guardSwitch.setChecked(true);
             } else {
-                Toast.makeText(this, "נדרשת הרשאת Device Admin", Toast.LENGTH_LONG).show();
+                Toast.makeText(this,
+                        "נדרשת הרשאת Device Admin", Toast.LENGTH_LONG).show();
             }
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int code, @NonNull String[] perms,
-                                           @NonNull int[] results) {
+    public void onRequestPermissionsResult(int code,
+            @NonNull String[] perms, @NonNull int[] results) {
         super.onRequestPermissionsResult(code, perms, results);
         if (code == REQ_PERM && hasCameraPermission()) {
             activate();
         } else {
-            Toast.makeText(this, "נדרשת הרשאת מצלמה", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,
+                    "נדרשת הרשאת מצלמה", Toast.LENGTH_LONG).show();
         }
     }
 }
