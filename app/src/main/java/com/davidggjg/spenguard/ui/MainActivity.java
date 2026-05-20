@@ -3,9 +3,9 @@ package com.davidggjg.spenguard.ui;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -29,6 +29,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERM = 100;
 
+    // שלבים
+    private static final int STEP_PERMISSION = 1;
+    private static final int STEP_OPEN_ACCESSIBILITY = 2;
+    private static final int STEP_ALLOW_RESTRICTED = 3;
+    private static final int STEP_ENABLE_SERVICE = 4;
+    private static final int STEP_DONE = 5;
+
     private TextView statusIcon;
     private TextView statusText;
     private Button actionBtn;
@@ -42,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         statusText = findViewById(R.id.statusText);
         actionBtn  = findViewById(R.id.startButton);
 
-        actionBtn.setOnClickListener(v -> handleButtonClick());
+        actionBtn.setOnClickListener(v -> handleStep());
     }
 
     @Override
@@ -51,56 +58,82 @@ public class MainActivity extends AppCompatActivity {
         updateUI();
     }
 
-    private void handleButtonClick() {
-        if (!hasCameraPermission()) {
-            requestPerms();
-        } else if (!isAccessibilityEnabled()) {
-            // פתח ישירות להגדרות נגישות
-            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            Toast.makeText(this,
-                "מצא SPenGuard ← לחץ עליו ← אפשר הגדרות מוגבלות ← הפעל",
-                Toast.LENGTH_LONG).show();
-        } else {
-            // הכל תקין — הפעל
-            startGuard();
+    private int getCurrentStep() {
+        if (!hasCameraPermission()) return STEP_PERMISSION;
+        if (!isAccessibilityEnabled()) {
+            // בדוק אם המשתמש כבר ניסה לפתוח נגישות
+            // אם הנגישות לא פעילה — אנחנו בשלב 2 או 3 או 4
+            // נניח שלב 2 תמיד — המשתמש יתקדם
+            return STEP_OPEN_ACCESSIBILITY;
+        }
+        return STEP_DONE;
+    }
+
+    private void handleStep() {
+        int step = getCurrentStep();
+        switch (step) {
+            case STEP_PERMISSION:
+                requestPerms();
+                break;
+
+            case STEP_OPEN_ACCESSIBILITY:
+                // פתח נגישות ישירות
+                Intent acc = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                acc.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(acc);
+                break;
+
+            case STEP_DONE:
+                startGuard();
+                break;
         }
     }
 
     private void updateUI() {
-        if (!hasCameraPermission()) {
-            statusIcon.setText("!");
-            statusText.setText("נדרשת הרשאת מצלמה");
-            actionBtn.setText("תן הרשאה");
-            actionBtn.setEnabled(true);
+        int step = getCurrentStep();
 
-        } else if (!isAccessibilityEnabled()) {
-            statusIcon.setText("!");
-            statusText.setText(
-                "נדרשת הרשאת נגישות\n\n" +
-                "1. לחץ על הכפתור למטה\n" +
-                "2. מצא SPenGuard ברשימה\n" +
-                "3. לחץ 3 נקודות ← אפשר הגדרות מוגבלות\n" +
-                "4. חזור ולחץ על SPenGuard ← הפעל"
-            );
-            actionBtn.setText("פתח הגדרות נגישות");
-            actionBtn.setEnabled(true);
+        switch (step) {
+            case STEP_PERMISSION:
+                statusIcon.setText("1");
+                statusText.setText("שלב 1 מתוך 3\n\nנדרשת הרשאת מצלמה\nלחץ כדי לאשר");
+                actionBtn.setText("תן הרשאת מצלמה");
+                actionBtn.setEnabled(true);
+                break;
 
-        } else {
-            // הכל עובד — הפעל אוטומטית
-            startGuard();
-            statusIcon.setText("ON");
-            statusText.setText(
-                "הגנה פעילה!\n\n" +
-                "מצלם עם המצלמה הקדמית\n" +
-                "מצפצף 5 שניות מעל שקט\n" +
-                "עובד גם עם מסך כבוי\n" +
-                "שומר תמונה לגלריה אוטומטית\n" +
-                "מתחיל אוטומטי אחרי ריסטארט"
-            );
-            actionBtn.setEnabled(false);
-            actionBtn.setText("פעיל");
+            case STEP_OPEN_ACCESSIBILITY:
+                // בדוק אם הכפתור הקודם כבר לחץ
+                // הצג את כל שלושת השלבים הנגישות
+                statusIcon.setText("2");
+                statusText.setText(
+                    "שלב 2 מתוך 3 — הגדרת נגישות\n\n" +
+                    "① לחץ על הכפתור למטה\n" +
+                    "② מצא SPenGuard ברשימה\n" +
+                    "③ אם כתוב חסום — לחץ עליו בכל זאת\n" +
+                    "④ תקבל הודעה על גישה חסומה — לחץ אישור\n\n" +
+                    "⑤ עכשיו לחץ כפתור למטה שוב\n" +
+                    "⑥ לך לאפליקציות ← SPenGuard\n" +
+                    "⑦ 3 נקודות למעלה שמאל\n" +
+                    "⑧ אפשר הגדרות מוגבלות\n\n" +
+                    "⑨ חזור לנגישות ← SPenGuard ← הפעל"
+                );
+                actionBtn.setText("פתח הגדרות נגישות ←");
+                actionBtn.setEnabled(true);
+                break;
+
+            case STEP_DONE:
+                startGuard();
+                statusIcon.setText("✓");
+                statusText.setText(
+                    "הגנה פעילה!\n\n" +
+                    "מצלם עם המצלמה הקדמית\n" +
+                    "מצפצף 5 שניות מעל שקט\n" +
+                    "עובד גם עם מסך כבוי\n" +
+                    "שומר תמונה לגלריה אוטומטית\n" +
+                    "מתחיל אוטומטי אחרי ריסטארט"
+                );
+                actionBtn.setText("פעיל");
+                actionBtn.setEnabled(false);
+                break;
         }
     }
 
@@ -118,16 +151,12 @@ public class MainActivity extends AppCompatActivity {
         AccessibilityManager am =
             (AccessibilityManager) getSystemService(ACCESSIBILITY_SERVICE);
         if (am == null) return false;
-
         List<AccessibilityServiceInfo> list =
             am.getEnabledAccessibilityServiceList(
                 AccessibilityServiceInfo.FEEDBACK_ALL_MASK);
-
         for (AccessibilityServiceInfo info : list) {
             ServiceInfo si = info.getResolveInfo().serviceInfo;
-            if (getPackageName().equals(si.packageName)) {
-                return true;
-            }
+            if (getPackageName().equals(si.packageName)) return true;
         }
         return false;
     }
