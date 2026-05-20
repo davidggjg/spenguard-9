@@ -36,14 +36,21 @@
             </intent-filter>
         </activity>
 
+        <!-- מסך עצירת אזעקה — קופץ מעל הכל כולל מסך נעילה -->
+        <activity
+            android:name=".ui.StopAlarmActivity"
+            android:exported="false"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:excludeFromRecents="true"/>
+
         <receiver
             android:name=".receiver.SPenReceiver"
             android:exported="true"
             android:enabled="true">
             <intent-filter android:priority="1000">
-                <!-- Hall sensor broadcast — עובד גם עם מסך כבוי -->
                 <action android:name="com.samsung.pen.INSERT" />
-                <!-- broadcastים נוספים -->
                 <action android:name="com.samsung.android.app.spen.remote.SPEN_DETACHED" />
                 <action android:name="com.samsung.android.cocktail.v2.action.SPEN_DETACHED" />
                 <action android:name="com.samsung.android.app.spen.SPEN_OUT_STATE_CHANGED" />
