@@ -1,12 +1,12 @@
 package com.davidggjg.spenguard.ui;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.davidggjg.spenguard.R;
 import com.davidggjg.spenguard.service.SPenGuardService;
 
 public class StopAlarmActivity extends AppCompatActivity {
@@ -15,7 +15,6 @@ public class StopAlarmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // מציג מעל מסך נעילה
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
