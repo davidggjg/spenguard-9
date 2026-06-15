@@ -1,106 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A0A0F"
-    android:fillViewport="true">
+    android:orientation="vertical"
+    android:background="#0A0A0F">
 
-    <LinearLayout
+    <!-- תוכן עיקרי -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:paddingBottom="40dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
-            android:paddingTop="56dp"
-            android:paddingBottom="32dp">
+            android:gravity="center_horizontal"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="24dp">
 
-            <!-- אייקון עיגול עם צבע -->
-            <FrameLayout
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginBottom="24dp">
-
-                <View
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:background="@drawable/circle_bg"/>
-
-                <TextView
-                    android:id="@+id/statusIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="!"
-                    android:textSize="42sp"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"/>
-            </FrameLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SPenGuard"
-                android:textSize="28sp"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:letterSpacing="0.05"
-                android:layout_marginBottom="6dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="הגנה אוטומטית לשליפת S Pen"
-                android:textSize="13sp"
-                android:textColor="#666680"
-                android:layout_marginBottom="0dp"/>
-
-        </LinearLayout>
-
-        <!-- כרטיס סטטוס -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardBackgroundColor="#13131F"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
-
-            <TextView
-                android:id="@+id/statusText"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="15sp"
-                android:textColor="#CCCCDD"
-                android:gravity="right"
-                android:lineSpacingExtra="10dp"
-                android:padding="24dp"/>
+                android:orientation="vertical"
+                android:gravity="center"
+                android:paddingTop="48dp"
+                android:paddingBottom="24dp">
 
-        </androidx.cardview.widget.CardView>
+                <FrameLayout
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="20dp">
 
-        <!-- כפתור ראשי -->
-        <Button
-            android:id="@+id/startButton"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:text="הפעל הגנה"
-            android:textSize="17sp"
-            android:textColor="#0A0A0F"
-            android:backgroundTint="#00E5FF"
-            android:textStyle="bold"
-            android:stateListAnimator="@null"
-            android:layout_marginTop="8dp"/>
+                    <View
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="@drawable/circle_bg"/>
 
-    </LinearLayout>
+                    <TextView
+                        android:id="@+id/statusIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="!"
+                        android:textSize="42sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"/>
+                </FrameLayout>
 
-</ScrollView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SPenGuard"
+                    android:textSize="28sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="הגנה אוטומטית לשליפת S Pen"
+                    android:textSize="13sp"
+                    android:textColor="#666680"/>
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                ads:cardBackgroundColor="#13131F"
+                ads:cardCornerRadius="16dp"
+                ads:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/statusText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="15sp"
+                    android:textColor="#CCCCDD"
+                    android:gravity="right"
+                    android:lineSpacingExtra="10dp"
+                    android:padding="24dp"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/startButton"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:text="הפעל הגנה"
+                android:textSize="17sp"
+                android:textColor="#0A0A0F"
+                android:backgroundTint="#00E5FF"
+                android:textStyle="bold"
+                android:stateListAnimator="@null"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- פרסומת בתחתית -->
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3300953794313480/5774570424"/>
+
+</LinearLayout>
