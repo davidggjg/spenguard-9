@@ -23,6 +23,10 @@ import androidx.core.content.ContextCompat;
 import com.davidggjg.spenguard.R;
 import com.davidggjg.spenguard.receiver.SPenDeviceAdminReceiver;
 import com.davidggjg.spenguard.service.WatchdogService;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView statusIcon;
     private TextView statusText;
     private Button actionBtn;
+    private AdView adView;
 
     private DevicePolicyManager dpm;
     private ComponentName adminComponent;
@@ -49,17 +54,40 @@ public class MainActivity extends AppCompatActivity {
         statusIcon = findViewById(R.id.statusIcon);
         statusText = findViewById(R.id.statusText);
         actionBtn  = findViewById(R.id.startButton);
+        adView     = findViewById(R.id.adView);
 
         dpm = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
         adminComponent = new ComponentName(this, SPenDeviceAdminReceiver.class);
 
         actionBtn.setOnClickListener(v -> handleStep());
+
+        // אתחול AdMob
+        MobileAds.initialize(this, initializationStatus -> {});
+        loadAd();
+    }
+
+    private void loadAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (adView != null) adView.resume();
         updateUI();
+    }
+
+    @Override
+    protected void onPause() {
+        if (adView != null) adView.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (adView != null) adView.destroy();
+        super.onDestroy();
     }
 
     private int getCurrentStep() {
@@ -134,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case 4:
-                // שמור שהגנה פעילה
                 saveEnabled(true);
                 startGuard();
                 statusIcon.setText("✓");
@@ -216,9 +243,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_DEVICE_ADMIN) {
-            updateUI();
-        }
+        if (requestCode == REQ_DEVICE_ADMIN) updateUI();
     }
 
     @Override
