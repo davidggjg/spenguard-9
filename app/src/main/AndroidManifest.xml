@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
@@ -25,6 +27,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- AdMob App ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3300953794313480~8612826066"/>
+
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
@@ -36,7 +43,6 @@
             </intent-filter>
         </activity>
 
-        <!-- מסך עצירת אזעקה — קופץ מעל הכל כולל מסך נעילה -->
         <activity
             android:name=".ui.StopAlarmActivity"
             android:exported="false"
