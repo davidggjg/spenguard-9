@@ -47,10 +47,10 @@ Google מבקש גרסה אנגלית.
 
 ## החלפת כתובת המייל
 
-כתובת הקשר באתר היא `0555687549z@gmail.com`. להחלפה:
+כתובת הקשר באתר היא `david.batish1@gmail.com`. להחלפה:
 
 ```bash
-grep -rl '0555687549z@gmail.com' docs PLAY_LISTING.md | \
+grep -rl 'david.batish1@gmail.com' docs PLAY_LISTING.md | \
   xargs sed -i 's/0555687549z@gmail\.com/NEW@EMAIL.COM/g'
 ```
 
