@@ -29,8 +29,13 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      # packages: '' - the action's default tries to install the long-removed
+      # "tools" package and fails. With licences accepted, the Android Gradle
+      # Plugin downloads the platform and build-tools it needs by itself.
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: ''
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -87,11 +92,11 @@ jobs:
 
       # ── Debug APK ──────────────────────────────────────────────────────
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: ./gradlew packageDebugApk --no-daemon --stacktrace
 
       - name: Verify Debug APK exists
         run: |
-          APK="app/build/outputs/apk/debug/SPENguard-debug.apk"
+          APK="app/build/outputs/dist/SPENguard-debug.apk"
           if [ ! -f "$APK" ]; then
             echo "::error::Debug APK was not produced at $APK"
             ls -R app/build/outputs || true
@@ -107,7 +112,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: ./gradlew packageReleaseApk --no-daemon --stacktrace
 
       - name: Build Release AAB
         if: steps.signing.outputs.available == 'true'
@@ -116,14 +121,14 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew copyReleaseBundle --no-daemon --stacktrace
+        run: ./gradlew packageReleaseBundle --no-daemon --stacktrace
 
       - name: Verify release artifacts and signatures
         if: steps.signing.outputs.available == 'true'
         run: |
           set -e
-          APK="app/build/outputs/apk/release/SPENguard-release.apk"
-          AAB="app/build/outputs/aab/SPENguard-release.aab"
+          APK="app/build/outputs/dist/SPENguard-release.apk"
+          AAB="app/build/outputs/dist/SPENguard-release.aab"
           for f in "$APK" "$AAB"; do
             if [ ! -f "$f" ]; then
               echo "::error::Expected artifact missing: $f"
@@ -161,7 +166,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SPENguard-debug-apk-${{ github.run_number }}
-          path: app/build/outputs/apk/debug/SPENguard-debug.apk
+          path: app/build/outputs/dist/SPENguard-debug.apk
           retention-days: 30
           if-no-files-found: error
 
@@ -170,7 +175,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SPENguard-release-apk-${{ github.run_number }}
-          path: app/build/outputs/apk/release/SPENguard-release.apk
+          path: app/build/outputs/dist/SPENguard-release.apk
           retention-days: 30
           if-no-files-found: error
 
@@ -179,7 +184,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: SPENguard-release-aab-${{ github.run_number }}
-          path: app/build/outputs/aab/SPENguard-release.aab
+          path: app/build/outputs/dist/SPENguard-release.aab
           retention-days: 30
           if-no-files-found: error
 
@@ -200,21 +205,21 @@ jobs:
           {
             echo "## SPENguard build #${{ github.run_number }}"
             echo ""
-            if [ -f app/build/outputs/apk/debug/SPENguard-debug.apk ]; then
-              echo "- ✅ Debug APK — $(du -h app/build/outputs/apk/debug/SPENguard-debug.apk | cut -f1)"
+            if [ -f app/build/outputs/dist/SPENguard-debug.apk ]; then
+              echo "- ✅ Debug APK — $(du -h app/build/outputs/dist/SPENguard-debug.apk | cut -f1)"
             else
               echo "- ❌ Debug APK — not produced"
             fi
             if [ "${{ steps.signing.outputs.available }}" != "true" ]; then
               echo "- ⏭️ Release APK / AAB — skipped (no signing secrets configured)"
             else
-              if [ -f app/build/outputs/apk/release/SPENguard-release.apk ]; then
-                echo "- ✅ Release APK (signed) — $(du -h app/build/outputs/apk/release/SPENguard-release.apk | cut -f1)"
+              if [ -f app/build/outputs/dist/SPENguard-release.apk ]; then
+                echo "- ✅ Release APK (signed) — $(du -h app/build/outputs/dist/SPENguard-release.apk | cut -f1)"
               else
                 echo "- ❌ Release APK — not produced"
               fi
-              if [ -f app/build/outputs/aab/SPENguard-release.aab ]; then
-                echo "- ✅ Release AAB (signed) — $(du -h app/build/outputs/aab/SPENguard-release.aab | cut -f1)"
+              if [ -f app/build/outputs/dist/SPENguard-release.aab ]; then
+                echo "- ✅ Release AAB (signed) — $(du -h app/build/outputs/dist/SPENguard-release.aab | cut -f1)"
               else
                 echo "- ❌ Release AAB — not produced"
               fi

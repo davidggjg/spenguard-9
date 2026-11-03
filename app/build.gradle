@@ -124,22 +124,50 @@ android {
     }
 }
 
-// Clear, predictable artifact names: SPENguard-debug.apk / SPENguard-release.apk
-applicationVariants.configureEach { variant ->
-    variant.outputs.configureEach { output ->
-        output.outputFileName = "SPENguard-${variant.buildType.name}.apk"
+// ---------------------------------------------------------------------------
+// Clearly named deliverables, all collected in app/build/outputs/dist/:
+//   SPENguard-debug.apk   SPENguard-release.apk   SPENguard-release.aab
+// The stock AGP output (app-debug.apk, ...) is left untouched alongside.
+// ---------------------------------------------------------------------------
+def distDir = layout.buildDirectory.dir("outputs/dist")
+
+tasks.register('packageDebugApk', Copy) {
+    group = 'spenguard'
+    description = 'Builds the debug APK and copies it to outputs/dist/SPENguard-debug.apk'
+    dependsOn 'assembleDebug'
+    from(layout.buildDirectory.dir("outputs/apk/debug")) {
+        include '*.apk'
     }
+    into distDir
+    rename { 'SPENguard-debug.apk' }
 }
 
-// Produces a clearly named copy of the release bundle:
-//   app/build/outputs/aab/SPENguard-release.aab
-tasks.register('copyReleaseBundle', Copy) {
+tasks.register('packageReleaseApk', Copy) {
+    group = 'spenguard'
+    description = 'Builds the release APK and copies it to outputs/dist/SPENguard-release.apk'
+    dependsOn 'assembleRelease'
+    from(layout.buildDirectory.dir("outputs/apk/release")) {
+        include '*.apk'
+    }
+    into distDir
+    rename { 'SPENguard-release.apk' }
+}
+
+tasks.register('packageReleaseBundle', Copy) {
+    group = 'spenguard'
+    description = 'Builds the release AAB and copies it to outputs/dist/SPENguard-release.aab'
     dependsOn 'bundleRelease'
     from(layout.buildDirectory.dir("outputs/bundle/release")) {
         include '*.aab'
     }
-    into(layout.buildDirectory.dir("outputs/aab"))
+    into distDir
     rename { 'SPENguard-release.aab' }
+}
+
+tasks.register('packageAll') {
+    group = 'spenguard'
+    description = 'Builds every deliverable: debug APK, release APK and release AAB'
+    dependsOn 'packageDebugApk', 'packageReleaseApk', 'packageReleaseBundle'
 }
 
 dependencies {
