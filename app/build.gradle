@@ -131,7 +131,7 @@ android {
 // ---------------------------------------------------------------------------
 def distDir = layout.buildDirectory.dir("outputs/dist")
 
-tasks.register('packageDebugApk', Copy) {
+tasks.register('spenguardDebugApk', Copy) {
     group = 'spenguard'
     description = 'Builds the debug APK and copies it to outputs/dist/SPENguard-debug.apk'
     dependsOn 'assembleDebug'
@@ -142,7 +142,7 @@ tasks.register('packageDebugApk', Copy) {
     rename { 'SPENguard-debug.apk' }
 }
 
-tasks.register('packageReleaseApk', Copy) {
+tasks.register('spenguardReleaseApk', Copy) {
     group = 'spenguard'
     description = 'Builds the release APK and copies it to outputs/dist/SPENguard-release.apk'
     dependsOn 'assembleRelease'
@@ -153,7 +153,7 @@ tasks.register('packageReleaseApk', Copy) {
     rename { 'SPENguard-release.apk' }
 }
 
-tasks.register('packageReleaseBundle', Copy) {
+tasks.register('spenguardReleaseAab', Copy) {
     group = 'spenguard'
     description = 'Builds the release AAB and copies it to outputs/dist/SPENguard-release.aab'
     dependsOn 'bundleRelease'
@@ -164,10 +164,10 @@ tasks.register('packageReleaseBundle', Copy) {
     rename { 'SPENguard-release.aab' }
 }
 
-tasks.register('packageAll') {
+tasks.register('spenguardAll') {
     group = 'spenguard'
     description = 'Builds every deliverable: debug APK, release APK and release AAB'
-    dependsOn 'packageDebugApk', 'packageReleaseApk', 'packageReleaseBundle'
+    dependsOn 'spenguardDebugApk', 'spenguardReleaseApk', 'spenguardReleaseAab'
 }
 
 dependencies {

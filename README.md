@@ -29,7 +29,7 @@ chmod +x gradlew
 ### א. Debug APK — להתקנה ידנית ולבדיקות
 
 ```bash
-./gradlew clean packageDebugApk
+./gradlew clean spenguardDebugApk
 ```
 
 הקובץ נוצר ב:
@@ -48,7 +48,7 @@ adb install -r app/build/outputs/dist/SPENguard-debug.apk
 ### ב. Release APK — חתום, להתקנה ידנית לפני הפצה
 
 ```bash
-./gradlew clean packageReleaseApk
+./gradlew clean spenguardReleaseApk
 ```
 
 ```
@@ -58,18 +58,18 @@ app/build/outputs/dist/SPENguard-release.apk
 ### ג. Release AAB — הפורמט להעלאה ל-Google Play
 
 ```bash
-./gradlew clean packageReleaseBundle
+./gradlew clean spenguardReleaseAab
 ```
 
 ```
 app/build/outputs/dist/SPENguard-release.aab
 ```
 
-> משימות ה-`package…` מריצות את `assemble`/`bundle` הרגילות ואז מעתיקות את
+> משימות ה-`spenguard…` מריצות את `assemble`/`bundle` הרגילות ואז מעתיקות את
 > הפלט ל-`app/build/outputs/dist/` בשם ברור. הקבצים המקוריים של Gradle
 > (`app-debug.apk` וכו') נשארים במקומם הרגיל.
 >
-> `./gradlew packageAll` בונה את שלושת הקבצים בפקודה אחת.
+> `./gradlew spenguardAll` בונה את שלושת הקבצים בפקודה אחת.
 
 ב-ב' ו-ג' חובה שיהיה מוגדר מפתח חתימה (ראו סעיף 2). **אם אין מפתח מוגדר
 הבנייה לא נכשלת — היא מפיקה פלט לא חתום ומדפיסה אזהרה.** פלט לא חתום לא
@@ -195,7 +195,7 @@ versionCode 2          // חייב לעלות בכל העלאה לחנות
 versionName "1.0.1"    // הגרסה שהמשתמש רואה
 ```
 
-ואז `./gradlew clean packageReleaseBundle` והעלאה של ה-AAB החדש.
+ואז `./gradlew clean spenguardReleaseAab` והעלאה של ה-AAB החדש.
 חשוב לחתום עם **אותו** מפתח כמו בגרסה הקודמת.
 
 ---

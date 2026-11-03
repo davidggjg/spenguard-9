@@ -92,7 +92,7 @@ jobs:
 
       # ── Debug APK ──────────────────────────────────────────────────────
       - name: Build Debug APK
-        run: ./gradlew packageDebugApk --no-daemon --stacktrace
+        run: ./gradlew spenguardDebugApk --no-daemon --stacktrace
 
       - name: Verify Debug APK exists
         run: |
@@ -112,7 +112,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew packageReleaseApk --no-daemon --stacktrace
+        run: ./gradlew spenguardReleaseApk --no-daemon --stacktrace
 
       - name: Build Release AAB
         if: steps.signing.outputs.available == 'true'
@@ -121,7 +121,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew packageReleaseBundle --no-daemon --stacktrace
+        run: ./gradlew spenguardReleaseAab --no-daemon --stacktrace
 
       - name: Verify release artifacts and signatures
         if: steps.signing.outputs.available == 'true'
