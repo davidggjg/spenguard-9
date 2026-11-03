@@ -1,0 +1,68 @@
+name: Deploy website
+
+# Publishes docs/ to GitHub Pages.
+# configure-pages has enablement: true, so the first successful run turns
+# Pages on by itself - no manual switch in repository settings.
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Check the pages the site needs are present
+        run: |
+          set -e
+          for f in index.html privacy.html download.html support.html \
+                   sitemap.xml robots.txt assets/style.css assets/lang.js; do
+            if [ ! -f "docs/$f" ]; then
+              echo "::error::docs/$f is missing"
+              exit 1
+            fi
+          done
+          echo "All required pages present."
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Report the live URL
+        run: |
+          {
+            echo "## Website deployed"
+            echo ""
+            echo "- Site: ${{ steps.deployment.outputs.page_url }}"
+            echo "- **Privacy policy (for Play Console): ${{ steps.deployment.outputs.page_url }}privacy.html**"
+          } >> "$GITHUB_STEP_SUMMARY"
