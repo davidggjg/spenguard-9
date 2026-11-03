@@ -23,6 +23,10 @@
 -keep class com.google.android.gms.ads.** { *; }
 -dontwarn com.google.android.gms.**
 
+# User Messaging Platform (consent)
+-keep class com.google.android.ump.** { *; }
+-dontwarn com.google.android.ump.**
+
 # Keep line numbers for readable crash reports.
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile

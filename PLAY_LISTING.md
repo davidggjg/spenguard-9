@@ -216,6 +216,25 @@ the image it just captured.
 
 - **Yes, my app contains ads.**
 
+### הסכמת GDPR למודעות — מה לעשות ב-AdMob
+
+האפליקציה כבר כוללת את מנגנון ההסכמה של Google (UMP) בקוד. כדי שהטופס
+באמת יוצג, יש להגדיר אותו פעם אחת בקונסול של AdMob:
+
+1. היכנס ל-[AdMob](https://apps.admob.com) → **Privacy & messaging**
+2. בחר **GDPR** → **Create message**
+3. בחר את האפליקציה SPENguard
+4. הדבק את כתובת מדיניות הפרטיות:
+   `https://davidggjg.github.io/spenguard-9/privacy.html`
+5. בחר שפות: עברית ואנגלית
+6. **Publish**
+
+מומלץ ליצור גם הודעת **US states** (CCPA) באותו מקום — לא חובה, אבל
+Google ממליצה.
+
+> בלי שלב זה Google עלולה להפסיק להגיש מודעות למשתמשים באירופה.
+> הקוד באפליקציה מוכן; חסרה רק ההגדרה בקונסול.
+
 ---
 
 ## 10. נכסים גרפיים
