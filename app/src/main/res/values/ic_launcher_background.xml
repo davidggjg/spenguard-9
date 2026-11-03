@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sampled from the app artwork so the adaptive icon blends into it. -->
+    <color name="ic_launcher_background">#000814</color>
+</resources>

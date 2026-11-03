@@ -2,24 +2,82 @@ plugins {
     id 'com.android.application'
 }
 
+// ---------------------------------------------------------------------------
+// Release signing configuration.
+//
+// Secrets are NEVER stored in this repository. They are read from, in order:
+//   1. keystore.properties in the project root (git-ignored), or
+//   2. environment variables (used by CI).
+//
+// If no complete signing material is found, the release signing config is
+// simply not created: debug builds still work, and `assembleRelease` /
+// `bundleRelease` produce unsigned output instead of failing with a
+// confusing "keystore not found" error.
+// ---------------------------------------------------------------------------
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+
+def ksValue = { String propName, String envName ->
+    def v = keystoreProperties.getProperty(propName)
+    if (v == null || v.trim().isEmpty()) {
+        v = System.getenv(envName)
+    }
+    return (v == null || v.trim().isEmpty()) ? null : v.trim()
+}
+
+def ksPath        = ksValue("storeFile", "KEYSTORE_FILE")
+def ksPassword    = ksValue("storePassword", "KEYSTORE_PASSWORD")
+def ksKeyAlias    = ksValue("keyAlias", "KEY_ALIAS")
+def ksKeyPassword = ksValue("keyPassword", "KEY_PASSWORD")
+
+def ksFile = null
+if (ksPath != null) {
+    def f = new File(ksPath)
+    if (!f.isAbsolute()) {
+        f = rootProject.file(ksPath)
+    }
+    if (f.exists()) {
+        ksFile = f
+    } else {
+        logger.warn("SPENguard: keystore '${ksPath}' not found - release builds will be UNSIGNED.")
+    }
+}
+
+def hasReleaseSigning = ksFile != null && ksPassword != null &&
+        ksKeyAlias != null && ksKeyPassword != null
+
+if (!hasReleaseSigning) {
+    logger.lifecycle("SPENguard: no release signing material found - release output will be UNSIGNED. See README.md.")
+}
+
 android {
     namespace 'com.davidggjg.spenguard'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.davidggjg.spenguard"
         minSdk 24
-        targetSdk 34
+        targetSdk 36
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
+
+        resourceConfigurations += ["en", "iw"]
     }
 
     signingConfigs {
-        release {
-            storeFile file("release.keystore")
-            storePassword System.getenv("KEYSTORE_PASSWORD") ?: "MyPassword123"
-            keyAlias System.getenv("KEY_ALIAS") ?: "spenguard"
-            keyPassword System.getenv("KEY_PASSWORD") ?: "MyPassword123"
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile ksFile
+                storePassword ksPassword
+                keyAlias ksKeyAlias
+                keyPassword ksKeyPassword
+                enableV1Signing true
+                enableV2Signing true
+                enableV3Signing true
+            }
         }
     }
 
@@ -27,18 +85,36 @@ android {
         debug {
             debuggable true
             minifyEnabled false
-            signingConfig signingConfigs.release
+            // Debug builds use the automatically generated debug keystore,
+            // so no private signing key is needed to build or install them.
+            signingConfig signingConfigs.debug
         }
         release {
+            debuggable false
+            // R8 shrinking is intentionally disabled: the app relies on
+            // Camera2 / AccessibilityService / DeviceAdmin entry points that
+            // are only referenced by the framework, and stability is more
+            // valuable here than a slightly smaller download.
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        // Errors are reported and must be fixed; they are not silently ignored.
+        abortOnError false
+        warningsAsErrors false
+        htmlReport true
+        textReport true
     }
 
     packaging {
@@ -48,10 +124,58 @@ android {
     }
 }
 
+// ---------------------------------------------------------------------------
+// Clearly named deliverables, all collected in app/build/outputs/dist/:
+//   SPENguard-debug.apk   SPENguard-release.apk   SPENguard-release.aab
+// The stock AGP output (app-debug.apk, ...) is left untouched alongside.
+// ---------------------------------------------------------------------------
+def distDir = layout.buildDirectory.dir("outputs/dist")
+
+tasks.register('spenguardDebugApk', Copy) {
+    group = 'spenguard'
+    description = 'Builds the debug APK and copies it to outputs/dist/SPENguard-debug.apk'
+    dependsOn 'assembleDebug'
+    from(layout.buildDirectory.dir("outputs/apk/debug")) {
+        include '*.apk'
+    }
+    into distDir
+    rename { 'SPENguard-debug.apk' }
+}
+
+tasks.register('spenguardReleaseApk', Copy) {
+    group = 'spenguard'
+    description = 'Builds the release APK and copies it to outputs/dist/SPENguard-release.apk'
+    dependsOn 'assembleRelease'
+    from(layout.buildDirectory.dir("outputs/apk/release")) {
+        include '*.apk'
+    }
+    into distDir
+    rename { 'SPENguard-release.apk' }
+}
+
+tasks.register('spenguardReleaseAab', Copy) {
+    group = 'spenguard'
+    description = 'Builds the release AAB and copies it to outputs/dist/SPENguard-release.aab'
+    dependsOn 'bundleRelease'
+    from(layout.buildDirectory.dir("outputs/bundle/release")) {
+        include '*.aab'
+    }
+    into distDir
+    rename { 'SPENguard-release.aab' }
+}
+
+tasks.register('spenguardAll') {
+    group = 'spenguard'
+    description = 'Builds every deliverable: debug APK, release APK and release AAB'
+    dependsOn 'spenguardDebugApk', 'spenguardReleaseApk', 'spenguardReleaseAab'
+}
+
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.core:core:1.12.0'
-    implementation 'com.google.android.gms:play-services-ads:23.0.0'
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
+
+    testImplementation 'junit:junit:4.13.2'
 }

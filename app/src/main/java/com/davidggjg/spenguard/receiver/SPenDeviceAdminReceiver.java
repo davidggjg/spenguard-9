@@ -3,14 +3,16 @@ package com.davidggjg.spenguard.receiver;
 import android.app.admin.DeviceAdminReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
-import com.davidggjg.spenguard.service.SPenGuardService;
-
+/**
+ * Device-admin receiver. SPENguard only uses the force-lock / watch-login
+ * policies declared in res/xml/device_admin.xml so that it keeps running
+ * while the screen is off; no management actions are performed here.
+ */
 public class SPenDeviceAdminReceiver extends DeviceAdminReceiver {
 
-    private static final String TAG = "SPenGuard";
+    private static final String TAG = "SPENguard";
 
     @Override
     public void onEnabled(Context context, Intent intent) {
@@ -24,6 +26,6 @@ public class SPenDeviceAdminReceiver extends DeviceAdminReceiver {
 
     @Override
     public void onPasswordFailed(Context context, Intent intent) {
-        // לא בשימוש — רק כדי שה-Device Admin יהיה פעיל
+        // Intentionally empty - declared only so the policy stays active.
     }
 }
