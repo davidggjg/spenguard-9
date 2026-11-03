@@ -220,16 +220,26 @@ the image it just captured.
 
 ## 10. נכסים גרפיים
 
-| נכס | דרישה | מצב |
-|---|---|---|
-| App icon | 512×512 PNG, ללא שקיפות | ✅ `play-assets/play-store-icon-512.png` |
-| Feature graphic | 1024×500 PNG/JPG | ❌ צריך ליצור |
-| Phone screenshots | 2–8, מינימום 320px | ❌ צריך לצלם מהמכשיר |
+כל הנכסים מוכנים בתיקייה `play-assets/`:
 
-**צילומי מסך** — צלם מהאפליקציה שרצה אצלך:
-1. מסך הבית עם "הגנה פעילה"
-2. אחד משלבי ההגדרה
-3. מסך "עצור אזעקה"
+| נכס | קובץ | גודל |
+|---|---|---|
+| App icon | `play-store-icon-512.png` | 512×512 |
+| Feature graphic | `feature-graphic-1024x500.png` | 1024×500 |
+| צילום מסך 1 | `screenshot-01-protection-active.png` | 1080×1920 |
+| צילום מסך 2 | `screenshot-02-setup-step-1.png` | 1080×1920 |
+| צילום מסך 3 | `screenshot-03-setup-step-3.png` | 1080×1920 |
+| צילום מסך 4 | `screenshot-04-alarm-triggered.png` | 1080×1920 |
+
+צילומי המסך הם שחזור מדויק של המסכים האמיתיים — כל צבע, גודל, מרווח
+וטקסט נלקחו ישירות מקובצי ה-layout ומ-`MainActivity`, ועובדו ברזולוציית
+xxhdpi אמיתית. באנר הפרסומת הושמט בכוונה: Google ממליצה לא להציג מודעות
+בצילומי מסך בחנות.
+
+> אם נוח לך לצלם מהמכשיר — עדיף תמיד. אלה קיימים כדי שתוכל להשלים את
+> הדף בלי זה.
+
+ליצירה מחדש: `cd play-assets/generator && node render.js`
 
 ---
 
