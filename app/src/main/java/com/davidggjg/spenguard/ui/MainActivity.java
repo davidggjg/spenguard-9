@@ -32,9 +32,13 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Setup wizard and on/off switch for the guard. */
 public class MainActivity extends AppCompatActivity {
@@ -50,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
     private DevicePolicyManager dpm;
     private ComponentName adminComponent;
+
+    private ConsentInformation consentInformation;
+    /** MobileAds must be initialised exactly once per process. */
+    private final AtomicBoolean adsInitialized = new AtomicBoolean(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,36 +77,107 @@ public class MainActivity extends AppCompatActivity {
         setUpAds();
     }
 
-    // ── Ads ───────────────────────────────────────────────────────────────
+    // ── Ads and consent ───────────────────────────────────────────────────
 
     /**
      * Ads are entirely optional: with no network, or if Play services are
      * missing, the banner is hidden and the app keeps working.
+     *
+     * <p>Before any ad is requested, Google's User Messaging Platform decides
+     * whether a consent form is required. In the EEA and the UK AdMob will not
+     * serve personalised ads — and may serve none at all — unless consent has
+     * been gathered through a certified consent mechanism. Outside those
+     * regions UMP reports that no form is needed and ads load immediately.
      */
     private void setUpAds() {
         if (adView == null) {
             return;
         }
         try {
-            MobileAds.initialize(this, initializationStatus -> {
-            });
             adView.setAdListener(new AdListener() {
                 @Override
                 public void onAdFailedToLoad(@NonNull LoadAdError adError) {
                     Log.w(TAG, "Ad failed to load: " + adError.getMessage());
-                    adView.setVisibility(View.GONE);
+                    hideBanner();
                 }
 
                 @Override
                 public void onAdLoaded() {
-                    adView.setVisibility(View.VISIBLE);
+                    if (adView != null) {
+                        adView.setVisibility(View.VISIBLE);
+                    }
                 }
             });
-            adView.loadAd(new AdRequest.Builder().build());
+            requestConsentThenInitAds();
         } catch (Exception | NoClassDefFoundError e) {
             Log.w(TAG, "Ads unavailable: " + e);
-            adView.setVisibility(View.GONE);
+            hideBanner();
             adView = null;
+        }
+    }
+
+    private void requestConsentThenInitAds() {
+        ConsentRequestParameters params = new ConsentRequestParameters.Builder()
+                .setTagForUnderAgeOfConsent(false)
+                .build();
+
+        consentInformation = UserMessagingPlatform.getConsentInformation(this);
+        consentInformation.requestConsentInfoUpdate(this, params,
+                () -> {
+                    // Consent state known: show the form only if one is required.
+                    UserMessagingPlatform.loadAndShowConsentFormIfRequired(this, formError -> {
+                        if (formError != null) {
+                            Log.w(TAG, "Consent form: " + formError.getMessage());
+                        }
+                        maybeInitializeAds();
+                    });
+                },
+                requestError -> {
+                    // Offline, or UMP unreachable. Never block the app on this;
+                    // canRequestAds() stays false until consent is resolved.
+                    Log.w(TAG, "Consent info update failed: " + requestError.getMessage());
+                    maybeInitializeAds();
+                });
+
+        // If consent was already granted in a previous session, ads can start
+        // without waiting for the network round-trip above.
+        maybeInitializeAds();
+    }
+
+    private void maybeInitializeAds() {
+        if (consentInformation == null || !consentInformation.canRequestAds()) {
+            return;
+        }
+        if (!adsInitialized.compareAndSet(false, true)) {
+            return;
+        }
+        // MobileAds.initialize does disk and network I/O; off the main thread
+        // so it can never contribute to an ANR.
+        new Thread(() -> {
+            try {
+                MobileAds.initialize(this, status -> runOnUiThread(this::loadBanner));
+            } catch (Exception | NoClassDefFoundError e) {
+                Log.w(TAG, "MobileAds init failed: " + e);
+                runOnUiThread(this::hideBanner);
+            }
+        }, "SPENguard-AdsInit").start();
+    }
+
+    private void loadBanner() {
+        if (adView == null || isFinishing() || isDestroyed()) {
+            return;
+        }
+        try {
+            adView.loadAd(new AdRequest.Builder().build());
+        } catch (Exception | NoClassDefFoundError e) {
+            Log.w(TAG, "loadAd failed: " + e);
+            hideBanner();
+        }
+    }
+
+    private void hideBanner() {
+        if (adView != null) {
+            adView.setVisibility(View.GONE);
         }
     }
 
