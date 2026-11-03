@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://davidggjg.github.io/spenguard-9/sitemap.xml
+Sitemap: https://spenguard.netlify.app/sitemap.xml

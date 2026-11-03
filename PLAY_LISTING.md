@@ -20,8 +20,8 @@
 | Category | Tools |
 | Tags | Security, Utilities |
 | Contact email | `david.batish1@gmail.com` |
-| Website | `https://davidggjg.github.io/spenguard-9/` |
-| Privacy Policy URL | `https://davidggjg.github.io/spenguard-9/privacy.html` |
+| Website | `https://spenguard.netlify.app/` |
+| Privacy Policy URL | `https://spenguard.netlify.app/privacy.html` |
 
 ---
 
@@ -85,7 +85,7 @@ SPENguard מזהה את פתיחת תפריט Air Command של סמסונג — 
 באנדרואיד 14 ומעלה המערכת מגבילה שימוש במצלמה מהרקע. במצבים מסוימים
 האזעקה תפעל ללא צילום. זו מגבלת מערכת ההפעלה.
 
-מדיניות פרטיות: https://davidggjg.github.io/spenguard-9/privacy.html
+מדיניות פרטיות: https://spenguard.netlify.app/privacy.html
 ```
 
 ---
@@ -225,7 +225,7 @@ the image it just captured.
 2. בחר **GDPR** → **Create message**
 3. בחר את האפליקציה SPENguard
 4. הדבק את כתובת מדיניות הפרטיות:
-   `https://davidggjg.github.io/spenguard-9/privacy.html`
+   `https://spenguard.netlify.app/privacy.html`
 5. בחר שפות: עברית ואנגלית
 6. **Publish**
 
