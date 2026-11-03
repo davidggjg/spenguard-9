@@ -13,7 +13,7 @@
 4. אחרי דקה-שתיים האתר יעלה בכתובת:
 
 ```
-https://davidggjg.github.io/spenguard-9/
+https://spenguard.netlify.app/
 ```
 
 | עמוד | כתובת |
