@@ -24,17 +24,20 @@ https://davidggjg.github.io/spenguard-9/
 הוספת `?lang=en` לכל כתובת פותחת אותה באנגלית — שימושי אם בודק מטעם
 Google מבקש גרסה אנגלית.
 
-## לפני העלאה — שני ערכים להחלפה
+## החלפת כתובת המייל
+
+כתובת הקשר באתר היא `0555687549z@gmail.com`. להחלפה:
 
 ```bash
-# כתובת המייל לפניות (מופיעה במדיניות ובעמוד התמיכה)
-grep -rl CONTACT_EMAIL_PLACEHOLDER docs PLAY_LISTING.md | \
-  xargs sed -i 's/CONTACT_EMAIL_PLACEHOLDER/your@email.com/g'
-
-# קישור לאפליקציה בחנות - רק אחרי שהיא תפורסם
-grep -rl PLAY_STORE_URL_PLACEHOLDER docs PLAY_LISTING.md | \
-  xargs sed -i 's#PLAY_STORE_URL_PLACEHOLDER#https://play.google.com/store/apps/details?id=com.davidggjg.spenguard#g'
+grep -rl '0555687549z@gmail.com' docs PLAY_LISTING.md | \
+  xargs sed -i 's/0555687549z@gmail\.com/NEW@EMAIL.COM/g'
 ```
+
+## הפעלת כפתור Google Play
+
+כפתור החנות בעמוד ההורדה מוסתר עד לפרסום האפליקציה. כדי להפעיל אותו,
+מחק את השורות `<!-- PLAY:START -->` ו-`<!-- PLAY:END -->` שעוטפות אותו
+ב-`docs/download.html` (בשתי השפות).
 
 ## קישורי ההורדה
 
