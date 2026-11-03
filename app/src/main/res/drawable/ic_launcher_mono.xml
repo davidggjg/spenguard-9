@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive-icon foreground: a shield with an S Pen across it. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Shield outline -->
+    <path
+        android:pathData="M54,26 L74,33 L74,55 C74,67 65,76 54,81 C43,76 34,67 34,55 L34,33 Z"
+        android:fillColor="#112033"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="3" />
+
+    <!-- S Pen body -->
+    <path
+        android:pathData="M48,66 L63,42 L68,45 L53,69 Z"
+        android:fillColor="#00E5FF" />
+
+    <!-- S Pen tip -->
+    <path
+        android:pathData="M48,66 L53,69 L47,72 Z"
+        android:fillColor="#FFFFFF" />
+</vector>

@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SPenGuard</string>
+    <string name="app_name">SPENguard</string>
+    <string name="accessibility_service_label">SPENguard</string>
+    <string name="accessibility_service_description">מזהה את פתיחת תפריט Air Command של סמסונג, שמתרחשת כאשר ה-S Pen נשלף מהמכשיר, ומפעיל את האזעקה. השירות קורא רק אירועי חלון של אפליקציית Air Command ואינו אוסף או שולח מידע אישי.</string>
+
+    <!-- Notification channels -->
+    <string name="channel_watchdog">SPENguard פעיל</string>
+    <string name="channel_watchdog_desc">התראה קבועה ושקטה המציינת שההגנה פועלת ברקע</string>
+    <string name="channel_alert">SPENguard התראה</string>
+    <string name="channel_alert_desc">התראה כאשר ה-S Pen נשלף</string>
+
+    <!-- Watchdog notification -->
+    <string name="watchdog_title">SPENguard פעיל</string>
+    <string name="watchdog_text">מאזין לשליפת S Pen…</string>
+
+    <!-- Alert notification -->
+    <string name="alert_title">SPENguard — S Pen הוסר!</string>
+    <string name="alert_text">לחץ עצור כדי לכבות את האזעקה</string>
+    <string name="action_stop">עצור</string>
+
+    <!-- Errors / prompts -->
+    <string name="device_admin_explanation">SPENguard צריך הרשאה זו כדי לפעול גם כשהמסך כבוי</string>
+    <string name="err_no_accessibility_settings">לא ניתן לפתוח את הגדרות הנגישות במכשיר זה</string>
+    <string name="err_no_device_admin">לא ניתן לפתוח את מסך מנהל המכשיר במכשיר זה</string>
+    <string name="err_service_start">לא ניתן להפעיל את שירות ההגנה. פתח את האפליקציה ונסה שוב.</string>
 </resources>

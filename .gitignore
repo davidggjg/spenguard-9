@@ -1,0 +1,23 @@
+# Build output
+build/
+app/build/
+.gradle/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Signing material - NEVER commit these
+keystore.properties
+*.jks
+*.keystore
+!debug.keystore
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+
+# Logs / reports
+*.log
+app/lint-report.*

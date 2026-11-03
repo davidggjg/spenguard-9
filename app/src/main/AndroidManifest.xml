@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Camera: used to photograph whoever removed the S Pen. -->
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Foreground services: the alarm must keep running with the screen off. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+    <!-- Re-arm the guard after a reboot. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
+
+    <!-- Shows the "stop alarm" screen over the lock screen. -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <!-- Legacy photo saving. On Android 10+ the photo is written through
+         MediaStore, which needs no storage permission at all. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <!-- AdMob banner. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <!-- The app is useful on any Samsung S Pen device; a camera is a bonus,
+         not a requirement, so it must not exclude devices on Google Play. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
 
     <application
@@ -30,11 +46,12 @@
         <!-- AdMob App ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3300953794313480~8612826066"/>
+            android:value="ca-app-pub-3300953794313480~8612826066" />
 
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:showOnLockScreen="true"
             android:turnScreenOn="true">
             <intent-filter>
@@ -46,11 +63,13 @@
         <activity
             android:name=".ui.StopAlarmActivity"
             android:exported="false"
+            android:launchMode="singleTop"
             android:showOnLockScreen="true"
             android:turnScreenOn="true"
             android:theme="@style/Theme.AppCompat.Dialog"
-            android:excludeFromRecents="true"/>
+            android:excludeFromRecents="true" />
 
+        <!-- S Pen detach / attach broadcasts from the Samsung framework. -->
         <receiver
             android:name=".receiver.SPenReceiver"
             android:exported="true"
@@ -60,6 +79,8 @@
                 <action android:name="com.samsung.android.app.spen.remote.SPEN_DETACHED" />
                 <action android:name="com.samsung.android.cocktail.v2.action.SPEN_DETACHED" />
                 <action android:name="com.samsung.android.app.spen.SPEN_OUT_STATE_CHANGED" />
+            </intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
@@ -91,7 +112,7 @@
         <service
             android:name=".service.SPenAccessibilityService"
             android:exported="true"
-            android:label="SPenGuard"
+            android:label="@string/accessibility_service_label"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
