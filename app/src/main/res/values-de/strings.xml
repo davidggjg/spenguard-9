@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_tagline">Automatischer Schutz beim Herausziehen des S Pen</string>
+    <string name="btn_start_protection">Schutz aktivieren</string>
+    <string name="step1_text">Schritt 1 von 3\n\nKamerazugriff wird benötigt\nZum Erlauben tippen</string>
+    <string name="step1_button">Kamerazugriff erlauben</string>
+    <string name="step2_text">Schritt 2 von 3\n\nGeräteadministrator wird benötigt\n\nDamit läuft die App weiter,\nauch wenn der Bildschirm aus ist\n\nZum Erlauben tippen</string>
+    <string name="step2_button">Geräteadministrator aktivieren</string>
+    <string name="step3_text">Schritt 3 von 3 — Bedienungshilfen einrichten\n\n① Tippe auf die Schaltfläche unten\n② Suche SPENguard in der Liste\n③ Steht dort „Blockiert“, tippe trotzdem darauf\n④ Ein Fenster erscheint — tippe auf Zulassen\n\n⑤ Gehe zu Einstellungen → Apps → SPENguard\n⑥ Tippe oben auf die 3 Punkte\n⑦ Eingeschränkte Einstellungen zulassen\n\n⑧ Zurück zu Bedienungshilfen → SPENguard → einschalten\n⑨ Zurück zur App</string>
+    <string name="step3_button">Bedienungshilfen öffnen →</string>
+    <string name="step4_text">Schutz aktiv!\n\nMacht ein Foto mit der Frontkamera\nAlarm 5 Sekunden lang, auch im Lautlosmodus\nFunktioniert bei ausgeschaltetem Bildschirm\nSpeichert das Foto in der Galerie\nStartet nach einem Neustart automatisch</string>
+    <string name="step4_button">Aktiv</string>
+    <string name="alarm_removed_title">S Pen entfernt!</string>
+    <string name="alarm_running">Alarm läuft</string>
+    <string name="action_stop_alarm">Alarm stoppen</string>
+    <string name="action_stop">Stopp</string>
+    <string name="watchdog_title">SPENguard aktiv</string>
+    <string name="watchdog_text">Überwacht das Herausziehen des S Pen…</string>
+    <string name="alert_title">SPENguard — S Pen entfernt!</string>
+    <string name="alert_text">Tippe auf Stopp, um den Alarm auszuschalten</string>
+    <string name="channel_watchdog">SPENguard aktiv</string>
+    <string name="channel_watchdog_desc">Dauerhafte, lautlose Benachrichtigung, dass der Schutz läuft</string>
+    <string name="channel_alert">SPENguard-Alarm</string>
+    <string name="channel_alert_desc">Alarm, wenn der S Pen entfernt wird</string>
+    <string name="device_admin_explanation">SPENguard benötigt diese Berechtigung, um bei ausgeschaltetem Bildschirm weiterzulaufen</string>
+    <string name="err_no_accessibility_settings">Die Bedienungshilfen lassen sich auf diesem Gerät nicht öffnen</string>
+    <string name="err_no_device_admin">Der Geräteadministrator-Bildschirm lässt sich auf diesem Gerät nicht öffnen</string>
+    <string name="err_service_start">Der Schutzdienst konnte nicht gestartet werden. Öffne die App und versuche es erneut.</string>
+    <string name="accessibility_service_description">Erkennt, wenn sich Samsungs Air-Command-Menü öffnet — was beim Herausziehen des S Pen geschieht — und löst den Alarm aus. Der Dienst liest ausschließlich Fensterereignisse der Air-Command-App und erfasst oder überträgt keine personenbezogenen Daten.</string>
+</resources>

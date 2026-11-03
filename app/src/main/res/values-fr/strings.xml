@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_tagline">Protection automatique au retrait du S Pen</string>
+    <string name="btn_start_protection">Activer la protection</string>
+    <string name="step1_text">Étape 1 sur 3\n\nL\'autorisation d\'accès à la caméra est requise\nAppuyez pour autoriser</string>
+    <string name="step1_button">Autoriser la caméra</string>
+    <string name="step2_text">Étape 2 sur 3\n\nL\'autorisation d\'administrateur est requise\n\nElle permet à l\'application de continuer\nà fonctionner écran éteint\n\nAppuyez pour autoriser</string>
+    <string name="step2_button">Activer l\'administrateur</string>
+    <string name="step3_text">Étape 3 sur 3 — Configuration de l\'accessibilité\n\n① Appuyez sur le bouton ci-dessous\n② Trouvez SPENguard dans la liste\n③ Si « Bloqué » s\'affiche, appuyez quand même\n④ Une fenêtre apparaît — appuyez sur Autoriser\n\n⑤ Allez dans Paramètres → Applications → SPENguard\n⑥ Appuyez sur les 3 points en haut\n⑦ Autorisez les paramètres restreints\n\n⑧ Revenez dans Accessibilité → SPENguard → activez\n⑨ Retournez dans l\'application</string>
+    <string name="step3_button">Ouvrir les paramètres d\'accessibilité →</string>
+    <string name="step4_text">Protection active !\n\nPrend une photo avec la caméra avant\nSonne 5 secondes malgré le mode silencieux\nFonctionne écran éteint\nEnregistre la photo dans la galerie\nSe réactive après un redémarrage</string>
+    <string name="step4_button">Active</string>
+    <string name="alarm_removed_title">S Pen retiré !</string>
+    <string name="alarm_running">L\'alarme retentit</string>
+    <string name="action_stop_alarm">Arrêter l\'alarme</string>
+    <string name="action_stop">Arrêter</string>
+    <string name="watchdog_title">SPENguard actif</string>
+    <string name="watchdog_text">Surveillance du retrait du S Pen…</string>
+    <string name="alert_title">SPENguard — S Pen retiré !</string>
+    <string name="alert_text">Appuyez sur Arrêter pour couper l\'alarme</string>
+    <string name="channel_watchdog">SPENguard actif</string>
+    <string name="channel_watchdog_desc">Notification permanente et silencieuse indiquant que la protection fonctionne</string>
+    <string name="channel_alert">Alerte SPENguard</string>
+    <string name="channel_alert_desc">Alerte affichée lorsque le S Pen est retiré</string>
+    <string name="device_admin_explanation">SPENguard a besoin de cette autorisation pour fonctionner écran éteint</string>
+    <string name="err_no_accessibility_settings">Impossible d\'ouvrir les paramètres d\'accessibilité sur cet appareil</string>
+    <string name="err_no_device_admin">Impossible d\'ouvrir l\'écran d\'administrateur sur cet appareil</string>
+    <string name="err_service_start">Le service de protection n\'a pas pu démarrer. Ouvrez l\'application et réessayez.</string>
+    <string name="accessibility_service_description">Détecte l\'ouverture du menu Air Command de Samsung, qui se produit lorsque le S Pen est retiré de l\'appareil, et déclenche l\'alarme. Le service lit uniquement les événements de fenêtre de l\'application Air Command et ne collecte ni ne transmet aucune information personnelle.</string>
+</resources>

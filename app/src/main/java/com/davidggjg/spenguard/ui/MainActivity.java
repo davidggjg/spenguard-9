@@ -270,61 +270,32 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI() {
         switch (getCurrentStep()) {
             case 1:
-                statusIcon.setText("1");
-                statusText.setText(
-                        "שלב 1 מתוך 3\n\n"
-                                + "נדרשת הרשאת מצלמה\n"
-                                + "לחץ כדי לאשר");
-                actionBtn.setText("תן הרשאת מצלמה");
-                actionBtn.setEnabled(true);
+                showStep("1", R.string.step1_text, R.string.step1_button, true);
                 break;
 
             case 2:
-                statusIcon.setText("2");
-                statusText.setText(
-                        "שלב 2 מתוך 3\n\n"
-                                + "נדרשת הרשאת מנהל מכשיר\n\n"
-                                + "זה מאפשר לאפליקציה לפעול\n"
-                                + "גם כשהמסך כבוי\n\n"
-                                + "לחץ כדי לאשר");
-                actionBtn.setText("אשר מנהל מכשיר");
-                actionBtn.setEnabled(true);
+                showStep("2", R.string.step2_text, R.string.step2_button, true);
                 break;
 
             case 3:
-                statusIcon.setText("3");
-                statusText.setText(
-                        "שלב 3 מתוך 3 — הגדרת נגישות\n\n"
-                                + "① לחץ על הכפתור למטה\n"
-                                + "② מצא SPENguard ברשימה\n"
-                                + "③ אם כתוב חסום — לחץ עליו בכל זאת\n"
-                                + "④ יקפוץ חלון — לחץ אישור\n\n"
-                                + "⑤ לך להגדרות ← אפליקציות ← SPENguard\n"
-                                + "⑥ לחץ 3 נקודות למעלה שמאל\n"
-                                + "⑦ אפשר הגדרות מוגבלות\n\n"
-                                + "⑧ חזור לנגישות ← SPENguard ← הפעל\n"
-                                + "⑨ חזור לאפליקציה");
-                actionBtn.setText("פתח הגדרות נגישות ←");
-                actionBtn.setEnabled(true);
+                showStep("3", R.string.step3_text, R.string.step3_button, true);
                 break;
 
             case 4:
                 enableGuard();
-                statusIcon.setText("✓");
-                statusText.setText(
-                        "הגנה פעילה!\n\n"
-                                + "מצלם עם המצלמה הקדמית\n"
-                                + "מצפצף 5 שניות מעל שקט\n"
-                                + "עובד גם עם מסך כבוי\n"
-                                + "שומר תמונה לגלריה אוטומטית\n"
-                                + "מתחיל אוטומטי אחרי ריסטארט");
-                actionBtn.setText("פעיל");
-                actionBtn.setEnabled(false);
+                showStep("\u2713", R.string.step4_text, R.string.step4_button, false);
                 break;
 
             default:
                 break;
         }
+    }
+
+    private void showStep(String icon, int textRes, int buttonRes, boolean enabled) {
+        statusIcon.setText(icon);
+        statusText.setText(textRes);
+        actionBtn.setText(buttonRes);
+        actionBtn.setEnabled(enabled);
     }
 
     /** Persists the "armed" flag and makes sure the watchdog is running. */

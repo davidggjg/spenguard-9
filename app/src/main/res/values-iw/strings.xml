@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_tagline">הגנה אוטומטית לשליפת S Pen</string>
+    <string name="btn_start_protection">הפעל הגנה</string>
+    <string name="step1_text">שלב 1 מתוך 3\n\nנדרשת הרשאת מצלמה\nלחץ כדי לאשר</string>
+    <string name="step1_button">תן הרשאת מצלמה</string>
+    <string name="step2_text">שלב 2 מתוך 3\n\nנדרשת הרשאת מנהל מכשיר\n\nזה מאפשר לאפליקציה לפעול\nגם כשהמסך כבוי\n\nלחץ כדי לאשר</string>
+    <string name="step2_button">אשר מנהל מכשיר</string>
+    <string name="step3_text">שלב 3 מתוך 3 — הגדרת נגישות\n\n① לחץ על הכפתור למטה\n② מצא SPENguard ברשימה\n③ אם כתוב חסום — לחץ עליו בכל זאת\n④ יקפוץ חלון — לחץ אישור\n\n⑤ לך להגדרות ← אפליקציות ← SPENguard\n⑥ לחץ 3 נקודות למעלה\n⑦ אפשר הגדרות מוגבלות\n\n⑧ חזור לנגישות ← SPENguard ← הפעל\n⑨ חזור לאפליקציה</string>
+    <string name="step3_button">פתח הגדרות נגישות ←</string>
+    <string name="step4_text">הגנה פעילה!\n\nמצלם עם המצלמה הקדמית\nמצפצף 5 שניות מעל שקט\nעובד גם עם מסך כבוי\nשומר תמונה לגלריה אוטומטית\nמתחיל אוטומטי אחרי ריסטארט</string>
+    <string name="step4_button">פעיל</string>
+    <string name="alarm_removed_title">S Pen הוסר!</string>
+    <string name="alarm_running">האזעקה פועלת</string>
+    <string name="action_stop_alarm">עצור אזעקה</string>
+    <string name="action_stop">עצור</string>
+    <string name="watchdog_title">SPENguard פעיל</string>
+    <string name="watchdog_text">מאזין לשליפת S Pen…</string>
+    <string name="alert_title">SPENguard — S Pen הוסר!</string>
+    <string name="alert_text">לחץ עצור כדי לכבות את האזעקה</string>
+    <string name="channel_watchdog">SPENguard פעיל</string>
+    <string name="channel_watchdog_desc">התראה קבועה ושקטה המציינת שההגנה פועלת ברקע</string>
+    <string name="channel_alert">SPENguard התראה</string>
+    <string name="channel_alert_desc">התראה כאשר ה-S Pen נשלף</string>
+    <string name="device_admin_explanation">SPENguard צריך הרשאה זו כדי לפעול גם כשהמסך כבוי</string>
+    <string name="err_no_accessibility_settings">לא ניתן לפתוח את הגדרות הנגישות במכשיר זה</string>
+    <string name="err_no_device_admin">לא ניתן לפתוח את מסך מנהל המכשיר במכשיר זה</string>
+    <string name="err_service_start">לא ניתן להפעיל את שירות ההגנה. פתח את האפליקציה ונסה שוב.</string>
+    <string name="accessibility_service_description">מזהה את פתיחת תפריט Air Command של סמסונג, שמתרחשת כאשר ה-S Pen נשלף מהמכשיר, ומפעיל את האזעקה. השירות קורא רק אירועי חלון של אפליקציית Air Command ואינו אוסף או שולח מידע אישי.</string>
+</resources>

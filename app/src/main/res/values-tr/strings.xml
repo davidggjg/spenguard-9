@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_tagline">S Pen çıkarıldığında otomatik koruma</string>
+    <string name="btn_start_protection">Korumayı etkinleştir</string>
+    <string name="step1_text">Adım 1 / 3\n\nKamera izni gerekiyor\nİzin vermek için dokunun</string>
+    <string name="step1_button">Kamera izni ver</string>
+    <string name="step2_text">Adım 2 / 3\n\nCihaz yöneticisi izni gerekiyor\n\nBu, ekran kapalıyken de uygulamanın\nçalışmasını sağlar\n\nİzin vermek için dokunun</string>
+    <string name="step2_button">Cihaz yöneticisini etkinleştir</string>
+    <string name="step3_text">Adım 3 / 3 — Erişilebilirlik kurulumu\n\n① Aşağıdaki düğmeye dokunun\n② Listede SPENguard\'ı bulun\n③ Engellendi yazıyorsa yine de dokunun\n④ Bir pencere açılır — İzin Ver\'e dokunun\n\n⑤ Ayarlar → Uygulamalar → SPENguard\'a gidin\n⑥ Üstteki 3 noktaya dokunun\n⑦ Kısıtlı ayarlara izin verin\n\n⑧ Erişilebilirlik → SPENguard → açın\n⑨ Uygulamaya geri dönün</string>
+    <string name="step3_button">Erişilebilirlik ayarlarını aç →</string>
+    <string name="step4_text">Koruma etkin!\n\nÖn kamerayla fotoğraf çeker\nSessiz modda bile 5 saniye alarm çalar\nEkran kapalıyken de çalışır\nFotoğrafı galeriye kaydeder\nYeniden başlatmadan sonra otomatik devreye girer</string>
+    <string name="step4_button">Etkin</string>
+    <string name="alarm_removed_title">S Pen çıkarıldı!</string>
+    <string name="alarm_running">Alarm çalıyor</string>
+    <string name="action_stop_alarm">Alarmı durdur</string>
+    <string name="action_stop">Durdur</string>
+    <string name="watchdog_title">SPENguard etkin</string>
+    <string name="watchdog_text">S Pen çıkarılması izleniyor…</string>
+    <string name="alert_title">SPENguard — S Pen çıkarıldı!</string>
+    <string name="alert_text">Alarmı susturmak için Durdur\'a dokunun</string>
+    <string name="channel_watchdog">SPENguard etkin</string>
+    <string name="channel_watchdog_desc">Korumanın çalıştığını gösteren kalıcı, sessiz bildirim</string>
+    <string name="channel_alert">SPENguard uyarısı</string>
+    <string name="channel_alert_desc">S Pen çıkarıldığında gösterilen uyarı</string>
+    <string name="device_admin_explanation">SPENguard\'ın ekran kapalıyken çalışmaya devam etmesi için bu izne ihtiyacı var</string>
+    <string name="err_no_accessibility_settings">Bu cihazda erişilebilirlik ayarları açılamıyor</string>
+    <string name="err_no_device_admin">Bu cihazda cihaz yöneticisi ekranı açılamıyor</string>
+    <string name="err_service_start">Koruma hizmeti başlatılamadı. Uygulamayı açıp tekrar deneyin.</string>
+    <string name="accessibility_service_description">Samsung\'un Air Command menüsünün açılmasını algılar; bu, S Pen cihazdan çıkarıldığında gerçekleşir ve alarmı tetikler. Hizmet yalnızca Air Command uygulamasının pencere olaylarını okur, hiçbir kişisel bilgi toplamaz veya iletmez.</string>
+</resources>

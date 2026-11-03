@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_tagline">S펜을 뽑으면 자동으로 보호</string>
+    <string name="btn_start_protection">보호 켜기</string>
+    <string name="step1_text">3단계 중 1단계\n\n카메라 권한이 필요합니다\n탭하여 허용하세요</string>
+    <string name="step1_button">카메라 권한 허용</string>
+    <string name="step2_text">3단계 중 2단계\n\n기기 관리자 권한이 필요합니다\n\n화면이 꺼져 있어도 앱이\n계속 작동할 수 있게 합니다\n\n탭하여 허용하세요</string>
+    <string name="step2_button">기기 관리자 켜기</string>
+    <string name="step3_text">3단계 중 3단계 — 접근성 설정\n\n① 아래 버튼을 누르세요\n② 목록에서 SPENguard를 찾으세요\n③ 차단됨이라고 표시돼도 그대로 누르세요\n④ 창이 뜨면 허용을 누르세요\n\n⑤ 설정 → 애플리케이션 → SPENguard로 이동\n⑥ 상단의 점 3개를 누르세요\n⑦ 제한된 설정 허용\n\n⑧ 접근성 → SPENguard → 켜기\n⑨ 앱으로 돌아오세요</string>
+    <string name="step3_button">접근성 설정 열기 →</string>
+    <string name="step4_text">보호가 켜졌습니다!\n\n전면 카메라로 사진을 찍습니다\n무음 모드에서도 5초간 알람이 울립니다\n화면이 꺼져 있어도 작동합니다\n사진을 갤러리에 저장합니다\n재부팅 후 자동으로 다시 켜집니다</string>
+    <string name="step4_button">켜짐</string>
+    <string name="alarm_removed_title">S펜이 분리되었습니다!</string>
+    <string name="alarm_running">알람이 울리는 중</string>
+    <string name="action_stop_alarm">알람 중지</string>
+    <string name="action_stop">중지</string>
+    <string name="watchdog_title">SPENguard 작동 중</string>
+    <string name="watchdog_text">S펜 분리 감지 중…</string>
+    <string name="alert_title">SPENguard — S펜이 분리되었습니다!</string>
+    <string name="alert_text">중지를 눌러 알람을 끄세요</string>
+    <string name="channel_watchdog">SPENguard 작동 중</string>
+    <string name="channel_watchdog_desc">보호가 실행 중임을 알리는 상시 무음 알림</string>
+    <string name="channel_alert">SPENguard 경고</string>
+    <string name="channel_alert_desc">S펜이 분리될 때 표시되는 경고</string>
+    <string name="device_admin_explanation">화면이 꺼져 있어도 계속 작동하려면 SPENguard에 이 권한이 필요합니다</string>
+    <string name="err_no_accessibility_settings">이 기기에서는 접근성 설정을 열 수 없습니다</string>
+    <string name="err_no_device_admin">이 기기에서는 기기 관리자 화면을 열 수 없습니다</string>
+    <string name="err_service_start">보호 서비스를 시작할 수 없습니다. 앱을 열고 다시 시도하세요.</string>
+    <string name="accessibility_service_description">S펜을 기기에서 분리할 때 열리는 삼성 Air Command 메뉴를 감지하여 알람을 작동시킵니다. 이 서비스는 Air Command 앱의 창 이벤트만 읽으며 개인정보를 수집하거나 전송하지 않습니다.</string>
+</resources>

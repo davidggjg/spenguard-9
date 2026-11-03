@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SPENguard</string>
-    <string name="accessibility_service_label">SPENguard</string>
-    <string name="accessibility_service_description">מזהה את פתיחת תפריט Air Command של סמסונג, שמתרחשת כאשר ה-S Pen נשלף מהמכשיר, ומפעיל את האזעקה. השירות קורא רק אירועי חלון של אפליקציית Air Command ואינו אוסף או שולח מידע אישי.</string>
 
-    <!-- Notification channels -->
-    <string name="channel_watchdog">SPENguard פעיל</string>
-    <string name="channel_watchdog_desc">התראה קבועה ושקטה המציינת שההגנה פועלת ברקע</string>
-    <string name="channel_alert">SPENguard התראה</string>
-    <string name="channel_alert_desc">התראה כאשר ה-S Pen נשלף</string>
+    <!-- Brand names: intentionally not translated. -->
+    <string name="app_name" translatable="false">SPENguard</string>
+    <string name="accessibility_service_label" translatable="false">SPENguard</string>
 
-    <!-- Watchdog notification -->
-    <string name="watchdog_title">SPENguard פעיל</string>
-    <string name="watchdog_text">מאזין לשליפת S Pen…</string>
-
-    <!-- Alert notification -->
-    <string name="alert_title">SPENguard — S Pen הוסר!</string>
-    <string name="alert_text">לחץ עצור כדי לכבות את האזעקה</string>
-    <string name="action_stop">עצור</string>
-
-    <!-- Errors / prompts -->
-    <string name="device_admin_explanation">SPENguard צריך הרשאה זו כדי לפעול גם כשהמסך כבוי</string>
-    <string name="err_no_accessibility_settings">לא ניתן לפתוח את הגדרות הנגישות במכשיר זה</string>
-    <string name="err_no_device_admin">לא ניתן לפתוח את מסך מנהל המכשיר במכשיר זה</string>
-    <string name="err_service_start">לא ניתן להפעיל את שירות ההגנה. פתח את האפליקציה ונסה שוב.</string>
+    <string name="app_tagline">Automatic S Pen removal protection</string>
+    <string name="btn_start_protection">Enable protection</string>
+    <string name="step1_text">Step 1 of 3\n\nCamera permission is required\nTap to allow</string>
+    <string name="step1_button">Grant camera permission</string>
+    <string name="step2_text">Step 2 of 3\n\nDevice admin permission is required\n\nThis lets the app keep working\nwhile the screen is off\n\nTap to allow</string>
+    <string name="step2_button">Enable device admin</string>
+    <string name="step3_text">Step 3 of 3 — Accessibility setup\n\n① Tap the button below\n② Find SPENguard in the list\n③ If it says Blocked, tap it anyway\n④ A dialog appears — tap Allow\n\n⑤ Go to Settings → Apps → SPENguard\n⑥ Tap the 3 dots at the top\n⑦ Allow restricted settings\n\n⑧ Return to Accessibility → SPENguard → turn on\n⑨ Come back to the app</string>
+    <string name="step3_button">Open accessibility settings →</string>
+    <string name="step4_text">Protection active!\n\nTakes a front-camera photo\nSounds a 5-second alarm over silent mode\nWorks with the screen off\nSaves the photo to your gallery\nRestarts automatically after reboot</string>
+    <string name="step4_button">Active</string>
+    <string name="alarm_removed_title">S Pen removed!</string>
+    <string name="alarm_running">Alarm is sounding</string>
+    <string name="action_stop_alarm">Stop alarm</string>
+    <string name="action_stop">Stop</string>
+    <string name="watchdog_title">SPENguard active</string>
+    <string name="watchdog_text">Listening for S Pen removal…</string>
+    <string name="alert_title">SPENguard — S Pen removed!</string>
+    <string name="alert_text">Tap Stop to silence the alarm</string>
+    <string name="channel_watchdog">SPENguard active</string>
+    <string name="channel_watchdog_desc">A permanent, silent notification showing that protection is running</string>
+    <string name="channel_alert">SPENguard alert</string>
+    <string name="channel_alert_desc">Alert shown when the S Pen is removed</string>
+    <string name="device_admin_explanation">SPENguard needs this permission to keep working while the screen is off</string>
+    <string name="err_no_accessibility_settings">Accessibility settings cannot be opened on this device</string>
+    <string name="err_no_device_admin">The device admin screen cannot be opened on this device</string>
+    <string name="err_service_start">The protection service could not start. Open the app and try again.</string>
+    <string name="accessibility_service_description">Detects when Samsung\'s Air Command menu opens, which happens when the S Pen is removed from the device, and triggers the alarm. The service only reads window events from the Air Command app and does not collect or transmit any personal information.</string>
 </resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_tagline">Perlindungan otomatis saat S Pen dicabut</string>
+    <string name="btn_start_protection">Aktifkan perlindungan</string>
+    <string name="step1_text">Langkah 1 dari 3\n\nIzin kamera diperlukan\nKetuk untuk mengizinkan</string>
+    <string name="step1_button">Beri izin kamera</string>
+    <string name="step2_text">Langkah 2 dari 3\n\nIzin admin perangkat diperlukan\n\nIni memungkinkan aplikasi tetap bekerja\nsaat layar mati\n\nKetuk untuk mengizinkan</string>
+    <string name="step2_button">Aktifkan admin perangkat</string>
+    <string name="step3_text">Langkah 3 dari 3 — Pengaturan aksesibilitas\n\n① Ketuk tombol di bawah\n② Temukan SPENguard dalam daftar\n③ Jika tertulis Diblokir, ketuk saja\n④ Jendela akan muncul — ketuk Izinkan\n\n⑤ Buka Setelan → Aplikasi → SPENguard\n⑥ Ketuk 3 titik di atas\n⑦ Izinkan setelan yang dibatasi\n\n⑧ Kembali ke Aksesibilitas → SPENguard → aktifkan\n⑨ Kembali ke aplikasi</string>
+    <string name="step3_button">Buka setelan aksesibilitas →</string>
+    <string name="step4_text">Perlindungan aktif!\n\nMengambil foto dengan kamera depan\nMembunyikan alarm 5 detik meski mode senyap\nBekerja saat layar mati\nMenyimpan foto ke galeri\nAktif kembali otomatis setelah dinyalakan ulang</string>
+    <string name="step4_button">Aktif</string>
+    <string name="alarm_removed_title">S Pen dicabut!</string>
+    <string name="alarm_running">Alarm sedang berbunyi</string>
+    <string name="action_stop_alarm">Hentikan alarm</string>
+    <string name="action_stop">Hentikan</string>
+    <string name="watchdog_title">SPENguard aktif</string>
+    <string name="watchdog_text">Memantau pencabutan S Pen…</string>
+    <string name="alert_title">SPENguard — S Pen dicabut!</string>
+    <string name="alert_text">Ketuk Hentikan untuk mematikan alarm</string>
+    <string name="channel_watchdog">SPENguard aktif</string>
+    <string name="channel_watchdog_desc">Notifikasi permanen tanpa suara yang menunjukkan perlindungan sedang berjalan</string>
+    <string name="channel_alert">Peringatan SPENguard</string>
+    <string name="channel_alert_desc">Peringatan yang muncul saat S Pen dicabut</string>
+    <string name="device_admin_explanation">SPENguard memerlukan izin ini agar tetap bekerja saat layar mati</string>
+    <string name="err_no_accessibility_settings">Setelan aksesibilitas tidak dapat dibuka di perangkat ini</string>
+    <string name="err_no_device_admin">Layar admin perangkat tidak dapat dibuka di perangkat ini</string>
+    <string name="err_service_start">Layanan perlindungan tidak dapat dimulai. Buka aplikasi dan coba lagi.</string>
+    <string name="accessibility_service_description">Mendeteksi saat menu Air Command Samsung terbuka, yang terjadi ketika S Pen dicabut dari perangkat, lalu memicu alarm. Layanan ini hanya membaca peristiwa jendela dari aplikasi Air Command dan tidak mengumpulkan atau mengirimkan informasi pribadi apa pun.</string>
+</resources>
