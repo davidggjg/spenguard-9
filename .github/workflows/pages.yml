@@ -1,14 +1,16 @@
 name: Deploy website
 
 # Publishes docs/ to GitHub Pages.
-# configure-pages has enablement: true, so the first successful run turns
-# Pages on by itself - no manual switch in repository settings.
+#
+# This workflow is only needed if Pages is set to the "GitHub Actions"
+# source. If Pages is set to "Deploy from a branch" (main, /docs) - the
+# simpler option - GitHub publishes the site on its own and this workflow
+# can be ignored.
+#
+# It is manual-only on purpose: a repository with Pages disabled, or with
+# Pages set to the branch source, would otherwise fail this job on every
+# push to docs/.
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'docs/**'
-      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -32,10 +34,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Pages must already be enabled, with its source set to
+      # "GitHub Actions". The workflow token is not permitted to create a
+      # Pages site, so enablement cannot be automated here.
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Check the pages the site needs are present
         run: |
