@@ -2,7 +2,7 @@
 
 מסמך זה מרכז את כל מה ש-Play Console יבקש ממך. העתק-הדבק מכאן.
 
-> **לפני הכול:** החלף בכל המסמך ובאתר את `0555687549z@gmail.com`
+> **לפני הכול:** החלף בכל המסמך ובאתר את `david.batish1@gmail.com`
 > בכתובת מייל אמיתית, ואת `PLAY_STORE_URL_PLACEHOLDER` בקישור לאפליקציה
 > אחרי שתיווצר בחנות.
 
@@ -19,7 +19,7 @@
 | Package name | `com.davidggjg.spenguard` |
 | Category | Tools |
 | Tags | Security, Utilities |
-| Contact email | `0555687549z@gmail.com` |
+| Contact email | `david.batish1@gmail.com` |
 | Website | `https://davidggjg.github.io/spenguard-9/` |
 | Privacy Policy URL | `https://davidggjg.github.io/spenguard-9/privacy.html` |
 
@@ -235,7 +235,7 @@ the image it just captured.
 
 ## 11. סדר הפעולות המומלץ
 
-1. החלף `0555687549z@gmail.com` בכל הקבצים
+1. החלף `david.batish1@gmail.com` בכל הקבצים
 2. הפעל GitHub Pages → קבל את ה-URL של מדיניות הפרטיות
 3. צור את האפליקציה ב-Play Console ומלא את סעיפים 1–9 כאן
 4. העלה את ה-AAB ל-**Internal testing** (לא Production)
