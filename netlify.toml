@@ -1,0 +1,22 @@
+# Netlify deployment for the SPENguard website.
+#
+# The site is plain static HTML in docs/ - there is nothing to build, so
+# Netlify only has to publish that folder.
+#
+# Connecting the repository in the Netlify UI picks this file up
+# automatically; no settings need to be filled in by hand.
+
+[build]
+  publish = "docs"
+  command = ""
+
+[build.environment]
+  # Nothing is compiled; keep the build image minimal and fast.
+  NETLIFY_USE_YARN = "false"
+
+# Serve the Search Console verification file as plain text rather than
+# letting it be treated as a document.
+[[headers]]
+  for = "/googleda24c725d544aa71.html"
+  [headers.values]
+    Content-Type = "text/html; charset=utf-8"
