@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_tagline">S Pen निकालने पर स्वचालित सुरक्षा</string>
+    <string name="btn_start_protection">सुरक्षा चालू करें</string>
+    <string name="step1_text">चरण 1 / 3\n\nकैमरा अनुमति आवश्यक है\nअनुमति देने के लिए टैप करें</string>
+    <string name="step1_button">कैमरा अनुमति दें</string>
+    <string name="step2_text">चरण 2 / 3\n\nडिवाइस व्यवस्थापक अनुमति आवश्यक है\n\nइससे ऐप स्क्रीन बंद होने पर भी\nकाम करता रहता है\n\nअनुमति देने के लिए टैप करें</string>
+    <string name="step2_button">डिवाइस व्यवस्थापक चालू करें</string>
+    <string name="step3_text">चरण 3 / 3 — सुलभता सेटअप\n\n① नीचे दिए बटन पर टैप करें\n② सूची में SPENguard खोजें\n③ अगर अवरुद्ध लिखा हो, फिर भी टैप करें\n④ एक विंडो खुलेगी — अनुमति दें पर टैप करें\n\n⑤ सेटिंग → ऐप्स → SPENguard पर जाएँ\n⑥ ऊपर 3 बिंदुओं पर टैप करें\n⑦ प्रतिबंधित सेटिंग की अनुमति दें\n\n⑧ सुलभता → SPENguard → चालू करें\n⑨ ऐप पर वापस आएँ</string>
+    <string name="step3_button">सुलभता सेटिंग खोलें →</string>
+    <string name="step4_text">सुरक्षा सक्रिय!\n\nफ्रंट कैमरे से फ़ोटो लेता है\nसाइलेंट मोड में भी 5 सेकंड अलार्म बजाता है\nस्क्रीन बंद होने पर भी काम करता है\nफ़ोटो गैलरी में सहेजता है\nरीस्टार्ट के बाद स्वतः चालू होता है</string>
+    <string name="step4_button">सक्रिय</string>
+    <string name="alarm_removed_title">S Pen निकाला गया!</string>
+    <string name="alarm_running">अलार्म बज रहा है</string>
+    <string name="action_stop_alarm">अलार्म बंद करें</string>
+    <string name="action_stop">रोकें</string>
+    <string name="watchdog_title">SPENguard सक्रिय</string>
+    <string name="watchdog_text">S Pen निकाले जाने पर नज़र…</string>
+    <string name="alert_title">SPENguard — S Pen निकाला गया!</string>
+    <string name="alert_text">अलार्म बंद करने के लिए रोकें टैप करें</string>
+    <string name="channel_watchdog">SPENguard सक्रिय</string>
+    <string name="channel_watchdog_desc">स्थायी, मौन सूचना जो दिखाती है कि सुरक्षा चल रही है</string>
+    <string name="channel_alert">SPENguard अलर्ट</string>
+    <string name="channel_alert_desc">S Pen निकाले जाने पर दिखने वाला अलर्ट</string>
+    <string name="device_admin_explanation">स्क्रीन बंद होने पर भी काम करने के लिए SPENguard को यह अनुमति चाहिए</string>
+    <string name="err_no_accessibility_settings">इस डिवाइस पर सुलभता सेटिंग नहीं खोली जा सकती</string>
+    <string name="err_no_device_admin">इस डिवाइस पर डिवाइस व्यवस्थापक स्क्रीन नहीं खोली जा सकती</string>
+    <string name="err_service_start">सुरक्षा सेवा शुरू नहीं हो सकी। ऐप खोलें और फिर कोशिश करें।</string>
+    <string name="accessibility_service_description">यह पहचानता है कि सैमसंग का Air Command मेनू कब खुलता है, जो S Pen निकालने पर होता है, और अलार्म चालू करता है। यह सेवा केवल Air Command ऐप की विंडो घटनाएँ पढ़ती है और कोई व्यक्तिगत जानकारी एकत्र या प्रेषित नहीं करती।</string>
+</resources>

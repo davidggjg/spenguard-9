@@ -13,7 +13,7 @@
 | שדה | ערך |
 |---|---|
 | App name | `SPENguard` |
-| Default language | עברית (he-IL) |
+| Default language | **English (en-US)** |
 | App or game | App |
 | Free or paid | Free |
 | Package name | `com.davidggjg.spenguard` |
@@ -25,20 +25,83 @@
 
 ---
 
+> **שפת ברירת המחדל היא אנגלית.** האפליקציה מתורגמת ל-15 שפות ובוחרת
+> אוטומטית לפי שפת המכשיר. בחנות כדאי להוסיף תרגומי דף גם לשפות
+> העיקריות (Store listing → Manage translations).
+
 ## 2. Short description (עד 80 תווים)
 
-```
-אזעקה וצילום אוטומטי ברגע שה-S Pen נשלף מהמכשיר
-```
-
-English:
+**אנגלית (ברירת מחדל):**
 ```
 Instant alarm and auto photo the moment your S Pen is pulled out
+```
+
+**עברית:**
+```
+אזעקה וצילום אוטומטי ברגע שה-S Pen נשלף מהמכשיר
 ```
 
 ---
 
 ## 3. Full description (עד 4000 תווים)
+
+**אנגלית (ברירת מחדל):**
+
+```
+SPENguard protects your S Pen.
+
+The moment the pen is pulled out of the device, SPENguard sounds a loud
+alarm and takes a photo with the front camera — even while the screen is
+off and even when the phone is on silent.
+
+■ Features
+
+• Instant detection when the S Pen is removed
+• Full-volume alarm that overrides silent mode
+• Automatic front-camera photo, saved straight to your gallery
+• A "stop alarm" screen that appears over the lock screen
+• Works with the screen off
+• Re-arms automatically after the phone restarts
+
+■ How it works
+
+SPENguard detects Samsung's Air Command menu opening — the event that
+happens exactly when the pen is pulled out. This is the most reliable way
+to detect removal, including while the screen is off.
+
+■ Three-step setup
+
+The app guides you step by step:
+1. Camera permission — to photograph whoever took the pen
+2. Device admin — so protection keeps running with the screen off
+3. Accessibility service — to detect the pen being removed
+
+■ Privacy
+
+Photos are saved only on your device, in the Pictures/SPENguard folder.
+They are never uploaded to any server. There are no user accounts and no
+sign-up. The app shows ads through Google AdMob, which collects device
+information in order to serve them. Full details in the privacy policy.
+
+■ Requirements
+
+• A Samsung device with an S Pen (Galaxy Note, S Ultra, Tab S and others)
+• Android 7.0 or newer
+• Samsung's Air Command menu enabled
+
+■ Good to know
+
+On Android 14 and later the system restricts background camera use. In
+some situations the alarm will sound without a photo. This is a platform
+restriction.
+
+Available in 15 languages, selected automatically from your device
+language.
+
+Privacy policy: https://spenguard.netlify.app/privacy.html
+```
+
+**עברית:**
 
 ```
 SPENguard שומרת על ה-S Pen שלך.
@@ -244,11 +307,13 @@ Google ממליצה.
 | נכס | קובץ | גודל |
 |---|---|---|
 | App icon | `play-store-icon-512.png` | 512×512 |
-| Feature graphic | `feature-graphic-1024x500.png` | 1024×500 |
-| צילום מסך 1 | `screenshot-01-protection-active.png` | 1080×1920 |
-| צילום מסך 2 | `screenshot-02-setup-step-1.png` | 1080×1920 |
-| צילום מסך 3 | `screenshot-03-setup-step-3.png` | 1080×1920 |
-| צילום מסך 4 | `screenshot-04-alarm-triggered.png` | 1080×1920 |
+| Feature graphic (אנגלית) | `feature-graphic-1024x500.png` | 1024×500 |
+| Feature graphic (עברית) | `feature-graphic-1024x500-he.png` | 1024×500 |
+| צילומי מסך — אנגלית | `screenshot-0*.png` (4 קבצים) | 1080×1920 |
+| צילומי מסך — עברית | `screenshot-0*-he.png` (4 קבצים) | 1080×1920 |
+
+הקבצים ללא סיומת שפה הם **אנגלית** — אלה שמעלים לשפת ברירת המחדל.
+את קובצי ה-`-he` מעלים תחת *Manage translations → עברית*.
 
 צילומי המסך הם שחזור מדויק של המסכים האמיתיים — כל צבע, גודל, מרווח
 וטקסט נלקחו ישירות מקובצי ה-layout ומ-`MainActivity`, ועובדו ברזולוציית
@@ -271,3 +336,20 @@ xxhdpi אמיתית. באנר הפרסומת הושמט בכוונה: Google מ�
 5. בדוק על מכשיר אמיתי
 6. הוסף 20 בודקים ל-14 יום (נדרש לחשבונות אישיים חדשים)
 7. רק אז — Production
+
+
+---
+
+## 12. שפות האפליקציה
+
+האפליקציה מתורגמת ל-15 שפות ובוחרת אוטומטית לפי שפת המכשיר:
+
+אנגלית (ברירת מחדל) · עברית · ערבית · רוסית · ספרדית · צרפתית · גרמנית ·
+פורטוגזית · איטלקית · הינדי · אינדונזית · טורקית · יפנית · קוריאנית · סינית מופשטת
+
+מכשיר שהשפה שלו אינה ברשימה מקבל **אנגלית** אוטומטית.
+באנדרואיד 13 ומעלה המשתמש יכול גם לבחור שפה ספציפית לאפליקציה
+בהגדרות המערכת.
+
+> התרגומים לשפות הפחות נפוצות ראויים לבדיקה של דובר שפת אם לפני
+> השקה רחבה באותם שווקים.

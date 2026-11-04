@@ -26,7 +26,8 @@
       var saved = localStorage.getItem(KEY);
       if (saved === 'he' || saved === 'en') return saved;
     } catch (e) { /* private mode */ }
-    return (navigator.language || '').toLowerCase().indexOf('he') === 0 ? 'he' : 'he';
+    // English is the default; Hebrew only for Hebrew-speaking browsers.
+    return (navigator.language || '').toLowerCase().indexOf('he') === 0 ? 'he' : 'en';
   }
 
   buttons.forEach(function (b) {

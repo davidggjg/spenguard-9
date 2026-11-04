@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_tagline">حماية تلقائية عند سحب قلم S Pen</string>
+    <string name="btn_start_protection">تفعيل الحماية</string>
+    <string name="step1_text">الخطوة 1 من 3\n\nمطلوب إذن الكاميرا\nاضغط للسماح</string>
+    <string name="step1_button">منح إذن الكاميرا</string>
+    <string name="step2_text">الخطوة 2 من 3\n\nمطلوب إذن مسؤول الجهاز\n\nهذا يتيح للتطبيق الاستمرار في العمل\nحتى عندما تكون الشاشة مطفأة\n\nاضغط للسماح</string>
+    <string name="step2_button">تفعيل مسؤول الجهاز</string>
+    <string name="step3_text">الخطوة 3 من 3 — إعداد إمكانية الوصول\n\n① اضغط على الزر أدناه\n② ابحث عن SPENguard في القائمة\n③ إذا ظهر محظور، اضغط عليه على أي حال\n④ ستظهر نافذة — اضغط سماح\n\n⑤ اذهب إلى الإعدادات ← التطبيقات ← SPENguard\n⑥ اضغط على النقاط الثلاث في الأعلى\n⑦ اسمح بالإعدادات المقيدة\n\n⑧ عد إلى إمكانية الوصول ← SPENguard ← فعّل\n⑨ ارجع إلى التطبيق</string>
+    <string name="step3_button">فتح إعدادات إمكانية الوصول ←</string>
+    <string name="step4_text">الحماية مفعّلة!\n\nيلتقط صورة بالكاميرا الأمامية\nينبّه لمدة 5 ثوانٍ فوق الوضع الصامت\nيعمل والشاشة مطفأة\nيحفظ الصورة في المعرض تلقائياً\nيعمل تلقائياً بعد إعادة التشغيل</string>
+    <string name="step4_button">مفعّل</string>
+    <string name="alarm_removed_title">تم سحب S Pen!</string>
+    <string name="alarm_running">الإنذار يعمل</string>
+    <string name="action_stop_alarm">إيقاف الإنذار</string>
+    <string name="action_stop">إيقاف</string>
+    <string name="watchdog_title">SPENguard يعمل</string>
+    <string name="watchdog_text">يراقب سحب S Pen…</string>
+    <string name="alert_title">SPENguard — تم سحب S Pen!</string>
+    <string name="alert_text">اضغط إيقاف لإسكات الإنذار</string>
+    <string name="channel_watchdog">SPENguard يعمل</string>
+    <string name="channel_watchdog_desc">إشعار دائم وصامت يوضح أن الحماية تعمل</string>
+    <string name="channel_alert">تنبيه SPENguard</string>
+    <string name="channel_alert_desc">تنبيه يظهر عند سحب قلم S Pen</string>
+    <string name="device_admin_explanation">يحتاج SPENguard هذا الإذن للاستمرار في العمل عندما تكون الشاشة مطفأة</string>
+    <string name="err_no_accessibility_settings">تعذّر فتح إعدادات إمكانية الوصول على هذا الجهاز</string>
+    <string name="err_no_device_admin">تعذّر فتح شاشة مسؤول الجهاز على هذا الجهاز</string>
+    <string name="err_service_start">تعذّر بدء خدمة الحماية. افتح التطبيق وحاول مرة أخرى.</string>
+    <string name="accessibility_service_description">يكتشف فتح قائمة Air Command من سامسونج، والذي يحدث عند سحب قلم S Pen من الجهاز، ويشغّل الإنذار. تقرأ الخدمة أحداث النوافذ الخاصة بتطبيق Air Command فقط ولا تجمع أو ترسل أي معلومات شخصية.</string>
+</resources>

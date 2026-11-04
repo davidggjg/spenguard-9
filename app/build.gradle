@@ -63,8 +63,13 @@ android {
         targetSdk 36
         versionCode 1
         versionName "1.0.0"
+    }
 
-        resourceConfigurations += ["en", "iw"]
+    androidResources {
+        // Builds res/xml/locale_config.xml from the values-* folders and
+        // links it in the manifest, so Android 13+ offers a per-app
+        // language picker without the file being maintained by hand.
+        generateLocaleConfig = true
     }
 
     signingConfigs {
