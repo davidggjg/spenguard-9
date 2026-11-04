@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">לא ניתן לפתוח את מסך מנהל המכשיר במכשיר זה</string>
     <string name="err_service_start">לא ניתן להפעיל את שירות ההגנה. פתח את האפליקציה ונסה שוב.</string>
     <string name="accessibility_service_description">מזהה את פתיחת תפריט Air Command של סמסונג, שמתרחשת כאשר ה-S Pen נשלף מהמכשיר, ומפעיל את האזעקה. השירות קורא רק אירועי חלון של אפליקציית Air Command ואינו אוסף או שולח מידע אישי.</string>
+    <string name="action_stop_protection">עצור הגנה</string>
+    <string name="step4_off_text">ההגנה כבויה\n\nה-S Pen אינו מנוטר\nלחץ כדי להפעיל את ההגנה</string>
+    <string name="msg_protection_stopped">ההגנה הופסקה</string>
 </resources>

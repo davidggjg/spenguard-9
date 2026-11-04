@@ -1,7 +1,9 @@
 package com.davidggjg.spenguard.service;
 
 import android.accessibilityservice.AccessibilityService;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -10,6 +12,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityWindowInfo;
 
+import com.davidggjg.spenguard.receiver.SPenReceiver;
 import com.davidggjg.spenguard.util.ServiceUtils;
 
 import java.util.List;
@@ -53,6 +56,14 @@ public class SPenAccessibilityService extends AccessibilityService {
         if (AIR_COMMAND_PKG.equals(pkg)
                 && type == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
 
+            // The user can switch protection off in the app. Without this
+            // check the accessibility path would keep sounding the alarm
+            // even though the app says protection is stopped.
+            if (!isGuardEnabled()) {
+                Log.i(TAG, "Air Command opened but protection is off - ignoring");
+                return;
+            }
+
             long now = System.currentTimeMillis();
             if (now - lastTriggerTime < COOLDOWN_MS) {
                 return;
@@ -79,6 +90,17 @@ public class SPenAccessibilityService extends AccessibilityService {
                     Log.e(TAG, "close check failed: " + e);
                 }
             }, CLOSE_CHECK_DELAY_MS);
+        }
+    }
+
+    private boolean isGuardEnabled() {
+        try {
+            SharedPreferences prefs =
+                    getSharedPreferences(SPenReceiver.PREFS, Context.MODE_PRIVATE);
+            return prefs.getBoolean(SPenReceiver.KEY_ENABLED, false);
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot read settings: " + e);
+            return false;
         }
     }
 

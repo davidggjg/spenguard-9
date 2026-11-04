@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">تعذّر فتح شاشة مسؤول الجهاز على هذا الجهاز</string>
     <string name="err_service_start">تعذّر بدء خدمة الحماية. افتح التطبيق وحاول مرة أخرى.</string>
     <string name="accessibility_service_description">يكتشف فتح قائمة Air Command من سامسونج، والذي يحدث عند سحب قلم S Pen من الجهاز، ويشغّل الإنذار. تقرأ الخدمة أحداث النوافذ الخاصة بتطبيق Air Command فقط ولا تجمع أو ترسل أي معلومات شخصية.</string>
+    <string name="action_stop_protection">إيقاف الحماية</string>
+    <string name="step4_off_text">الحماية متوقفة\n\nلا تتم مراقبة قلم S Pen\nاضغط لتفعيل الحماية</string>
+    <string name="msg_protection_stopped">تم إيقاف الحماية</string>
 </resources>

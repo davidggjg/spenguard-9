@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">この端末では端末管理者の画面を開けません</string>
     <string name="err_service_start">保護サービスを開始できませんでした。アプリを開いて再試行してください。</string>
     <string name="accessibility_service_description">Sペンがデバイスから外されるとサムスンのAir Commandメニューが開きます。読み取るのは Air Command アプリのウィンドウイベントのみで、個人情報の収集や送信は一切行いません。</string>
+    <string name="action_stop_protection">保護を停止</string>
+    <string name="step4_off_text">保護はオフです\n\nSペンは監視されていません\nタップして保護を有効にしてください</string>
+    <string name="msg_protection_stopped">保護を停止しました</string>
 </resources>

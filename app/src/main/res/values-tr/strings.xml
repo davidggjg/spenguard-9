@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">Bu cihazda cihaz yöneticisi ekranı açılamıyor</string>
     <string name="err_service_start">Koruma hizmeti başlatılamadı. Uygulamayı açıp tekrar deneyin.</string>
     <string name="accessibility_service_description">Samsung\'un Air Command menüsünün açılmasını algılar; bu, S Pen cihazdan çıkarıldığında gerçekleşir ve alarmı tetikler. Hizmet yalnızca Air Command uygulamasının pencere olaylarını okur, hiçbir kişisel bilgi toplamaz veya iletmez.</string>
+    <string name="action_stop_protection">Korumayı durdur</string>
+    <string name="step4_off_text">Koruma kapalı\n\nS Pen\'iniz izlenmiyor\nKorumayı açmak için dokunun</string>
+    <string name="msg_protection_stopped">Koruma durduruldu</string>
 </resources>

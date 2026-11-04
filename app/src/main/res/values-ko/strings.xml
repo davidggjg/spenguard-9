@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">이 기기에서는 기기 관리자 화면을 열 수 없습니다</string>
     <string name="err_service_start">보호 서비스를 시작할 수 없습니다. 앱을 열고 다시 시도하세요.</string>
     <string name="accessibility_service_description">S펜을 기기에서 분리할 때 열리는 삼성 Air Command 메뉴를 감지하여 알람을 작동시킵니다. 이 서비스는 Air Command 앱의 창 이벤트만 읽으며 개인정보를 수집하거나 전송하지 않습니다.</string>
+    <string name="action_stop_protection">보호 중지</string>
+    <string name="step4_off_text">보호가 꺼져 있습니다\n\nS펜을 감시하고 있지 않습니다\n탭하여 보호를 켜세요</string>
+    <string name="msg_protection_stopped">보호가 중지되었습니다</string>
 </resources>

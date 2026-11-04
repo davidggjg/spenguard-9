@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">На этом устройстве не удаётся открыть экран администратора</string>
     <string name="err_service_start">Не удалось запустить службу защиты. Откройте приложение и повторите попытку.</string>
     <string name="accessibility_service_description">Определяет открытие меню Air Command от Samsung, которое происходит при извлечении S Pen из устройства, и включает сигнал тревоги. Служба считывает только события окон приложения Air Command и не собирает и не передаёт личные данные.</string>
+    <string name="action_stop_protection">Остановить защиту</string>
+    <string name="step4_off_text">Защита выключена\n\nS Pen не отслеживается\nНажмите, чтобы включить защиту</string>
+    <string name="msg_protection_stopped">Защита остановлена</string>
 </resources>

@@ -32,4 +32,7 @@
     <string name="err_no_device_admin">The device admin screen cannot be opened on this device</string>
     <string name="err_service_start">The protection service could not start. Open the app and try again.</string>
     <string name="accessibility_service_description">Detects when Samsung\'s Air Command menu opens, which happens when the S Pen is removed from the device, and triggers the alarm. The service only reads window events from the Air Command app and does not collect or transmit any personal information.</string>
+    <string name="action_stop_protection">Stop protection</string>
+    <string name="step4_off_text">Protection is off\n\nYour S Pen is not being monitored\nTap to turn protection on</string>
+    <string name="msg_protection_stopped">Protection stopped</string>
 </resources>
