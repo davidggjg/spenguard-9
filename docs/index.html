@@ -1,23 +1,23 @@
 <!doctype html>
-<html lang="he" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SPENguard — הגנה אוטומטית לשליפת S Pen</title>
-<meta name="description" content="אפליקציית אבטחה למכשירי Samsung עם S Pen: אזעקה וצילום אוטומטי כשהעט נשלף.">
+<title>SPENguard — Automatic S Pen removal protection</title>
+<meta name="description" content="Security app for Samsung devices with an S Pen: an instant alarm and an automatic front-camera photo the moment the pen is pulled out.">
 <link rel="icon" href="assets/icon-192.png">
 <link rel="canonical" href="https://spenguard.netlify.app/">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SPENguard">
-<meta property="og:locale" content="he_IL">
-<meta property="og:locale:alternate" content="en_US">
-<meta property="og:title" content="SPENguard — הגנה אוטומטית לשליפת S Pen">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="he_IL">
+<meta property="og:title" content="SPENguard — Automatic S Pen removal protection">
 <meta property="og:description" content="אפליקציית אבטחה למכשירי Samsung עם S Pen: אזעקה וצילום אוטומטי ברגע שהעט נשלף.">
 <meta property="og:url" content="https://spenguard.netlify.app/">
 <meta property="og:image" content="https://spenguard.netlify.app/assets/icon-512.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SPENguard — הגנה אוטומטית לשליפת S Pen">
+<meta name="twitter:title" content="SPENguard — Automatic S Pen removal protection">
 <meta name="twitter:description" content="אפליקציית אבטחה למכשירי Samsung עם S Pen: אזעקה וצילום אוטומטי ברגע שהעט נשלף.">
 <meta name="twitter:image" content="https://spenguard.netlify.app/assets/icon-512.png">
 <link rel="apple-touch-icon" href="https://spenguard.netlify.app/assets/icon-192.png">
@@ -28,6 +28,7 @@
   "@type": "SoftwareApplication",
   "name": "SPENguard",
   "operatingSystem": "Android 7.0+",
+  "inLanguage": ["en", "he", "ar", "ru", "es", "fr", "de", "pt", "it", "hi", "id", "tr", "ja", "ko", "zh"],
   "applicationCategory": "SecurityApplication",
   "description": "אפליקציית אבטחה למכשירי Samsung עם S Pen: אזעקה וצילום אוטומטי ברגע שהעט נשלף.",
   "url": "https://spenguard.netlify.app/",
@@ -43,23 +44,23 @@
     <img src="assets/icon-192.png" alt="SPENguard">
     <div class="head-text">
       <h1>SPENguard</h1>
-      <p>הגנה אוטומטית לשליפת S Pen</p>
+      <p>Automatic S Pen removal protection</p>
     </div>
   </div>
   <nav class="site">
-    <a href="index.html" aria-current="page">בית / Home</a>
-    <a href="privacy.html">פרטיות / Privacy</a>
-    <a href="download.html">הורדה / Download</a>
-    <a href="support.html">תמיכה / Support</a>
+    <a href="index.html" aria-current="page">Home / בית</a>
+    <a href="privacy.html">Privacy / פרטיות</a>
+    <a href="download.html">Download / הורדה</a>
+    <a href="support.html">Support / תמיכה</a>
   </nav>
 </header>
 <main class="wrap">
-  <div class="langbar" role="group" aria-label="בחירת שפה / Language">
-    <button type="button" data-lang="he" aria-pressed="true">עברית</button>
-    <button type="button" data-lang="en" aria-pressed="false">English</button>
+  <div class="langbar" role="group" aria-label="Language / בחירת שפה">
+    <button type="button" data-lang="en" aria-pressed="true">English</button>
+    <button type="button" data-lang="he" aria-pressed="false">עברית</button>
   </div>
 
-<section lang="he" dir="rtl">
+<section lang="he" dir="rtl" hidden>
   <h2>מה האפליקציה עושה</h2>
   <p class="lead">
     SPENguard שומרת על ה-S&nbsp;Pen שלך. ברגע שהעט נשלף מהמכשיר, האפליקציה
@@ -82,6 +83,30 @@
     האפליקציה מסתמכת על תפריט Air&nbsp;Command של סמסונג כדי לזהות את שליפת העט.
   </div>
 
+  <h2>איך זה נראה</h2>
+    <div class="shots">
+      <figure>
+        <img src="assets/screens/01-protection-active.png" width="540" height="960" loading="lazy"
+             alt="SPENguard screenshot: Protection active">
+        <figcaption>הגנה פעילה</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/screens/02-setup-step-1.png" width="540" height="960" loading="lazy"
+             alt="SPENguard screenshot: Guided setup">
+        <figcaption>הגדרה מודרכת</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/screens/03-setup-step-3.png" width="540" height="960" loading="lazy"
+             alt="SPENguard screenshot: Accessibility step">
+        <figcaption>שלב הנגישות</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/screens/04-alarm-triggered.png" width="540" height="960" loading="lazy"
+             alt="SPENguard screenshot: Alarm triggered">
+        <figcaption>האזעקה מופעלת</figcaption>
+      </figure>
+    </div>
+
   <h2>פרטיות בקצרה</h2>
   <p>
     התמונות שהאפליקציה מצלמת נשמרות <strong>רק במכשיר שלך</strong> ואינן נשלחות
@@ -94,7 +119,7 @@
   <p><a class="btn" href="download.html">לעמוד ההורדה ←</a></p>
 </section>
 
-<section lang="en" dir="ltr" hidden>
+<section lang="en" dir="ltr">
   <h2>What the app does</h2>
   <p class="lead">
     SPENguard protects your S&nbsp;Pen. The moment the pen is pulled out of the
@@ -118,6 +143,30 @@
     7.0 or newer. Detection relies on Samsung's Air&nbsp;Command menu.
   </div>
 
+  <h2>What it looks like</h2>
+    <div class="shots">
+      <figure>
+        <img src="assets/screens/01-protection-active.png" width="540" height="960" loading="lazy"
+             alt="SPENguard screenshot: Protection active">
+        <figcaption>Protection active</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/screens/02-setup-step-1.png" width="540" height="960" loading="lazy"
+             alt="SPENguard screenshot: Guided setup">
+        <figcaption>Guided setup</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/screens/03-setup-step-3.png" width="540" height="960" loading="lazy"
+             alt="SPENguard screenshot: Accessibility step">
+        <figcaption>Accessibility step</figcaption>
+      </figure>
+      <figure>
+        <img src="assets/screens/04-alarm-triggered.png" width="540" height="960" loading="lazy"
+             alt="SPENguard screenshot: Alarm triggered">
+        <figcaption>Alarm triggered</figcaption>
+      </figure>
+    </div>
+
   <h2>Privacy at a glance</h2>
   <p>
     Photos taken by the app stay <strong>on your device only</strong> and are
@@ -131,7 +180,7 @@
 </section>
 </main>
 <footer class="site">
-  <p>SPENguard · <a href="index.html">בית</a> · <a href="privacy.html">פרטיות</a> · <a href="download.html">הורדה</a> · <a href="support.html">תמיכה</a></p>
+  <p>SPENguard · <a href="index.html">Home</a> · <a href="privacy.html">Privacy</a> · <a href="download.html">Download</a> · <a href="support.html">Support</a></p>
 </footer>
 <script src="assets/lang.js"></script>
 </body>

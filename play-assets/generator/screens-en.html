@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="font.css">
+<style>
+/* 1dp = 1px here; rendered at deviceScaleFactor 3 -> 1080x1920, matching
+   an xxhdpi phone exactly, so every size below is the real dp value
+   taken from the app's layout XML. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 360px; height: 640px; }
+body {
+  font-family: Heebo, "DejaVu Sans", sans-serif;
+  background: #0A0A0F;            /* activity_main.xml background */
+  overflow: hidden;
+}
+.screen { width: 360px; height: 640px; position: relative; display: none; }
+.screen.on { display: block; }
+
+/* ---- status bar ---- */
+.status {
+  height: 24px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 10px; color: #cfd6e4; font-size: 11px; letter-spacing: .3px;
+}
+.status .right { display: flex; gap: 4px; align-items: center; }
+.bar { width: 2px; background: #cfd6e4; border-radius: 1px; }
+.batt { width: 16px; height: 8px; border: 1px solid #cfd6e4; border-radius: 2px; position: relative; }
+.batt::after { content:''; position:absolute; top:1px; bottom:1px; left:1px; width:11px; background:#cfd6e4; border-radius:1px; }
+.batt::before { content:''; position:absolute; right:-3px; top:2px; width:2px; height:4px; background:#cfd6e4; border-radius:0 1px 1px 0; }
+
+/* ---- main screen ---- */
+.content { padding: 0 24px 24px; display: flex; flex-direction: column; height: calc(640px - 24px); }
+.header { padding: 48px 0 24px; display: flex; flex-direction: column; align-items: center; }
+.ring {
+  width: 100px; height: 100px; border-radius: 50%;
+  background: #1A1A2E; border: 2px solid #00E5FF;   /* circle_bg.xml */
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.ring span { font-size: 42px; font-weight: 700; color: #FFFFFF; line-height: 1; }
+.title { font-size: 28px; font-weight: 700; color: #FFFFFF; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: #666680; }
+
+.card {
+  background: #13131F; border-radius: 16px; padding: 24px;
+  margin-bottom: 16px;
+}
+.card p {
+  font-size: 15px; color: #CCCCDD; text-align: left;
+  line-height: 28px; white-space: pre-line;
+}
+.btn {
+  height: 58px; border-radius: 4px; background: #00E5FF; color: #0A0A0F;
+  font-size: 17px; font-weight: 700; display: flex; align-items: center;
+  justify-content: center; font-family: inherit;
+}
+.spacer { flex: 1; }
+
+/* ---- stop-alarm dialog (Theme.AppCompat.Dialog over the main screen) ---- */
+.dim { position: absolute; inset: 0; background: rgba(0,0,0,.82); }
+.dialog {
+  position: absolute; left: 22px; right: 22px; top: 50%;
+  transform: translateY(-50%);
+  background: rgba(8,8,12,.97);              /* #E6000000 over a dark screen */
+  border: 1px solid rgba(204,0,0,.35);
+  border-radius: 6px; padding: 36px 32px 34px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.ring-red {
+  width: 100px; height: 100px; border-radius: 50%;
+  background: #2E0000; border: 2px solid #CC0000;   /* circle_red_bg.xml */
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+}
+.ring-red span { font-size: 48px; font-weight: 700; color: #fff; line-height: 1; }
+.alarm-title { font-size: 26px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px; }
+.alarm-sub { font-size: 16px; color: #FF6666; margin-bottom: 40px; }
+.btn-stop {
+  width: 260px; height: 58px; border-radius: 4px; background: #CC0000;
+  color: #FFFFFF; font-size: 18px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+</style>
+</head>
+<body>
+
+<!-- =============== 1. protection active =============== -->
+<div class="screen" id="s-active">
+  <div class="status">
+    <span>01:24</span>
+    <span class="right">
+      <span class="bar" style="height:4px"></span><span class="bar" style="height:6px"></span>
+      <span class="bar" style="height:8px"></span><span class="bar" style="height:10px"></span>
+      <span class="batt"></span>
+    </span>
+  </div>
+  <div class="content">
+    <div class="header">
+      <div class="ring"><span>✓</span></div>
+      <div class="title">SPENguard</div>
+      <div class="subtitle">Automatic S Pen removal protection</div>
+    </div>
+    <div class="card"><p>Protection active!
+
+Takes a front-camera photo
+Sounds a 5-second alarm over silent mode
+Works with the screen off
+Saves the photo to your gallery
+Restarts automatically after reboot</p></div>
+    <div class="btn">Active</div>
+    <div class="spacer"></div>
+  </div>
+</div>
+
+<!-- =============== 2. step 1 =============== -->
+<div class="screen" id="s-step1">
+  <div class="status">
+    <span>01:24</span>
+    <span class="right">
+      <span class="bar" style="height:4px"></span><span class="bar" style="height:6px"></span>
+      <span class="bar" style="height:8px"></span><span class="bar" style="height:10px"></span>
+      <span class="batt"></span>
+    </span>
+  </div>
+  <div class="content">
+    <div class="header">
+      <div class="ring"><span>1</span></div>
+      <div class="title">SPENguard</div>
+      <div class="subtitle">Automatic S Pen removal protection</div>
+    </div>
+    <div class="card"><p>Step 1 of 3
+
+Camera permission is required
+Tap to allow</p></div>
+    <div class="btn">Grant camera permission</div>
+    <div class="spacer"></div>
+  </div>
+</div>
+
+<!-- =============== 3. step 3 =============== -->
+<div class="screen" id="s-step3">
+  <div class="status">
+    <span>01:24</span>
+    <span class="right">
+      <span class="bar" style="height:4px"></span><span class="bar" style="height:6px"></span>
+      <span class="bar" style="height:8px"></span><span class="bar" style="height:10px"></span>
+      <span class="batt"></span>
+    </span>
+  </div>
+  <div class="content">
+    <div class="header" style="padding:32px 0 20px">
+      <div class="ring"><span>3</span></div>
+      <div class="title">SPENguard</div>
+      <div class="subtitle">Automatic S Pen removal protection</div>
+    </div>
+    <div class="card" style="padding:20px"><p style="font-size:14px;line-height:24px">Step 3 of 3 — Accessibility setup
+
+① Tap the button below
+② Find SPENguard in the list
+③ If it says Blocked, tap it anyway
+④ A dialog appears — tap Allow
+
+⑤ Go to Settings → Apps → SPENguard
+⑥ Tap the 3 dots at the top
+⑦ Allow restricted settings</p></div>
+    <div class="btn">Open accessibility settings →</div>
+    <div class="spacer"></div>
+  </div>
+</div>
+
+<!-- =============== 4. alarm =============== -->
+<div class="screen" id="s-alarm">
+  <div class="status">
+    <span>01:24</span>
+    <span class="right">
+      <span class="bar" style="height:4px"></span><span class="bar" style="height:6px"></span>
+      <span class="bar" style="height:8px"></span><span class="bar" style="height:10px"></span>
+      <span class="batt"></span>
+    </span>
+  </div>
+  <div class="content">
+    <div class="header">
+      <div class="ring"><span>✓</span></div>
+      <div class="title">SPENguard</div>
+      <div class="subtitle">Automatic S Pen removal protection</div>
+    </div>
+    <div class="card"><p>Protection active!
+
+Takes a front-camera photo
+Sounds a 5-second alarm over silent mode
+Works with the screen off</p></div>
+    <div class="btn">Active</div>
+    <div class="spacer"></div>
+  </div>
+  <div class="dim"></div>
+  <div class="dialog">
+    <div class="ring-red"><span>!</span></div>
+    <div class="alarm-title">S Pen removed!</div>
+    <div class="alarm-sub">Alarm is sounding</div>
+    <div class="btn-stop">Stop alarm</div>
+  </div>
+</div>
+
+</body>
+</html>

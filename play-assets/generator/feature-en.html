@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="font.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:1024px; height:500px; overflow:hidden; }
+body {
+  font-family: Heebo, "DejaVu Sans", sans-serif;
+  background:
+    radial-gradient(900px 500px at 78% 50%, rgba(0,160,255,.30) 0%, rgba(0,60,120,.10) 42%, rgba(0,0,0,0) 70%),
+    linear-gradient(135deg, #00111f 0%, #000814 55%, #000208 100%);
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 70px; position:relative;
+}
+.glow {
+  position:absolute; left:150px; top:50%; transform:translateY(-50%);
+  width:420px; height:420px; border-radius:50%;
+  background: radial-gradient(circle, rgba(0,229,255,.28) 0%, rgba(0,229,255,0) 65%);
+}
+.text { position:relative; text-align:right; max-width:560px; }
+.name {
+  font-size:76px; font-weight:900; color:#fff; letter-spacing:-1px; line-height:1;
+  margin-bottom:18px;
+}
+.name em { font-style:normal; color:#00E5FF; }
+.tag { font-size:26px; font-weight:500; color:#cfe6f5; line-height:1.4; margin-bottom:22px; }
+.points { display:flex; gap:9px; justify-content:flex-start; flex-wrap:nowrap; }
+.pill {
+  white-space:nowrap;
+  font-size:15px; color:#9fe9f8; border:1px solid rgba(0,229,255,.45);
+  background: rgba(0,229,255,.07);
+  border-radius:999px; padding:7px 14px;
+}
+.art { position:relative; width:330px; height:330px; }
+.art img { width:100%; height:100%; border-radius:68px; display:block; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="art"><img src="../play-store-icon-512.png" alt=""></div>
+  <div class="text" style="text-align:left">
+    <div class="name">SPEN<em>guard</em></div>
+    <div class="tag">Instant alarm and photo the<br>moment your S Pen is pulled out</div>
+    <div class="points">
+      <span class="pill">Instant alarm</span>
+      <span class="pill">Front-camera photo</span>
+      <span class="pill">Works screen-off</span>
+    </div>
+  </div>
+</body>
+</html>

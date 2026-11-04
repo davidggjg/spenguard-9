@@ -158,3 +158,29 @@ footer.site a { color: var(--muted); }
   .head-inner img { width: 52px; height: 52px; }
   .head-text h1 { font-size: 1.35rem; }
 }
+
+/* ---------- screenshot gallery ---------- */
+.shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin: 20px 0 8px;
+}
+.shots figure { margin: 0; }
+.shots img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #0a0a0f;
+}
+.shots figcaption {
+  margin-top: 8px;
+  font-size: .82rem;
+  color: var(--muted);
+  text-align: center;
+}
+@media (max-width: 420px) {
+  .shots { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+}
