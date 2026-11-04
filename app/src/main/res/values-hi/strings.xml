@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">इस डिवाइस पर डिवाइस व्यवस्थापक स्क्रीन नहीं खोली जा सकती</string>
     <string name="err_service_start">सुरक्षा सेवा शुरू नहीं हो सकी। ऐप खोलें और फिर कोशिश करें।</string>
     <string name="accessibility_service_description">यह पहचानता है कि सैमसंग का Air Command मेनू कब खुलता है, जो S Pen निकालने पर होता है, और अलार्म चालू करता है। यह सेवा केवल Air Command ऐप की विंडो घटनाएँ पढ़ती है और कोई व्यक्तिगत जानकारी एकत्र या प्रेषित नहीं करती।</string>
+    <string name="action_stop_protection">सुरक्षा बंद करें</string>
+    <string name="step4_off_text">सुरक्षा बंद है\n\nआपके S Pen पर नज़र नहीं रखी जा रही\nसुरक्षा चालू करने के लिए टैप करें</string>
+    <string name="msg_protection_stopped">सुरक्षा बंद कर दी गई</string>
 </resources>

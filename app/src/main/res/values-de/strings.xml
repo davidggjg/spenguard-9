@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">Der Geräteadministrator-Bildschirm lässt sich auf diesem Gerät nicht öffnen</string>
     <string name="err_service_start">Der Schutzdienst konnte nicht gestartet werden. Öffne die App und versuche es erneut.</string>
     <string name="accessibility_service_description">Erkennt, wenn sich Samsungs Air-Command-Menü öffnet — was beim Herausziehen des S Pen geschieht — und löst den Alarm aus. Der Dienst liest ausschließlich Fensterereignisse der Air-Command-App und erfasst oder überträgt keine personenbezogenen Daten.</string>
+    <string name="action_stop_protection">Schutz beenden</string>
+    <string name="step4_off_text">Der Schutz ist aus\n\nDein S Pen wird nicht überwacht\nTippe, um den Schutz einzuschalten</string>
+    <string name="msg_protection_stopped">Schutz beendet</string>
 </resources>

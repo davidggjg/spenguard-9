@@ -28,4 +28,7 @@
     <string name="err_no_device_admin">Layar admin perangkat tidak dapat dibuka di perangkat ini</string>
     <string name="err_service_start">Layanan perlindungan tidak dapat dimulai. Buka aplikasi dan coba lagi.</string>
     <string name="accessibility_service_description">Mendeteksi saat menu Air Command Samsung terbuka, yang terjadi ketika S Pen dicabut dari perangkat, lalu memicu alarm. Layanan ini hanya membaca peristiwa jendela dari aplikasi Air Command dan tidak mengumpulkan atau mengirimkan informasi pribadi apa pun.</string>
+    <string name="action_stop_protection">Hentikan perlindungan</string>
+    <string name="step4_off_text">Perlindungan nonaktif\n\nS Pen Anda tidak dipantau\nKetuk untuk mengaktifkan perlindungan</string>
+    <string name="msg_protection_stopped">Perlindungan dihentikan</string>
 </resources>

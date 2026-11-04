@@ -162,7 +162,8 @@ footer.site a { color: var(--muted); }
 /* ---------- screenshot gallery ---------- */
 .shots {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(110px, 155px));
+  justify-content: center;
   gap: 14px;
   margin: 20px 0 8px;
 }
@@ -182,5 +183,5 @@ footer.site a { color: var(--muted); }
   text-align: center;
 }
 @media (max-width: 420px) {
-  .shots { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .shots { grid-template-columns: repeat(2, minmax(0, 150px)); gap: 10px; }
 }

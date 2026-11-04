@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.Handler;
@@ -64,6 +65,9 @@ public class WatchdogService extends Service {
 
         if (ACTION_STOP.equals(action)) {
             Log.i(TAG, "WatchdogService: STOP received");
+            // An explicit stop must also disarm the guard, otherwise
+            // SPenReceiver would start it again after the next reboot.
+            setGuardEnabled(false);
             shutDown();
             return START_NOT_STICKY;
         }
@@ -88,6 +92,16 @@ public class WatchdogService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void setGuardEnabled(boolean enabled) {
+        try {
+            SharedPreferences prefs =
+                    getSharedPreferences(SPenReceiver.PREFS, Context.MODE_PRIVATE);
+            prefs.edit().putBoolean(SPenReceiver.KEY_ENABLED, enabled).apply();
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot persist settings: " + e);
+        }
     }
 
     private boolean promoteToForeground() {
@@ -193,9 +207,15 @@ public class WatchdogService extends Service {
     }
 
     private Notification buildNotification() {
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+
         PendingIntent open = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                new Intent(this, MainActivity.class), flags);
+
+        // Lets the user switch protection off without opening the app -
+        // expected of any app that runs a permanent foreground service.
+        PendingIntent stop = PendingIntent.getService(this, 1,
+                new Intent(this, WatchdogService.class).setAction(ACTION_STOP), flags);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(getString(R.string.watchdog_title))
@@ -203,6 +223,8 @@ public class WatchdogService extends Service {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setContentIntent(open)
+                .addAction(R.drawable.ic_notification,
+                        getString(R.string.action_stop_protection), stop)
                 .setSilent(true)
                 .setOngoing(true)
                 .build();

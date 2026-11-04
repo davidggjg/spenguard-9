@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import com.davidggjg.spenguard.R;
 import com.davidggjg.spenguard.receiver.SPenDeviceAdminReceiver;
 import com.davidggjg.spenguard.receiver.SPenReceiver;
+import com.davidggjg.spenguard.service.SPenGuardService;
 import com.davidggjg.spenguard.service.WatchdogService;
 import com.davidggjg.spenguard.util.ServiceUtils;
 import com.google.android.gms.ads.AdListener;
@@ -246,7 +247,11 @@ public class MainActivity extends AppCompatActivity {
                 openAccessibilitySettings();
                 break;
             case 4:
-                enableGuard();
+                if (isGuardEnabled()) {
+                    disableGuard();
+                } else {
+                    enableGuard();
+                }
                 updateUI();
                 break;
             default:
@@ -282,8 +287,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case 4:
-                enableGuard();
-                showStep("\u2713", R.string.step4_text, R.string.step4_button, false);
+                // Rendering must never arm the guard: onResume calls this, so
+                // doing so would immediately undo "stop protection".
+                if (isGuardEnabled()) {
+                    showStep("\u2713", R.string.step4_text,
+                            R.string.action_stop_protection, true);
+                } else {
+                    showStep("\u2715", R.string.step4_off_text,
+                            R.string.btn_start_protection, true);
+                }
                 break;
 
             default:
@@ -296,6 +308,37 @@ public class MainActivity extends AppCompatActivity {
         statusText.setText(textRes);
         actionBtn.setText(buttonRes);
         actionBtn.setEnabled(enabled);
+    }
+
+    private boolean isGuardEnabled() {
+        try {
+            return getSharedPreferences(SPenReceiver.PREFS, MODE_PRIVATE)
+                    .getBoolean(SPenReceiver.KEY_ENABLED, false);
+        } catch (Exception e) {
+            Log.e(TAG, "Cannot read settings: " + e);
+            return false;
+        }
+    }
+
+    /**
+     * Turns protection off: clears the armed flag so it does not come back
+     * after a reboot, stops the watchdog, and silences the alarm if it
+     * happens to be sounding.
+     */
+    private void disableGuard() {
+        saveEnabled(false);
+
+        Intent stopWatchdog = new Intent(this, WatchdogService.class);
+        stopWatchdog.setAction(WatchdogService.ACTION_STOP);
+        ServiceUtils.startServiceSafe(this, stopWatchdog);
+
+        if (SPenGuardService.isActive()) {
+            Intent stopAlarm = new Intent(this, SPenGuardService.class);
+            stopAlarm.setAction(SPenGuardService.ACTION_STOP);
+            ServiceUtils.startServiceSafe(this, stopAlarm);
+        }
+
+        Toast.makeText(this, R.string.msg_protection_stopped, Toast.LENGTH_SHORT).show();
     }
 
     /** Persists the "armed" flag and makes sure the watchdog is running. */
